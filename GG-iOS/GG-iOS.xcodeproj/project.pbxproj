@@ -16,9 +16,22 @@
 		E390FF782E8D37CD00D6DA57 /* GG-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "GG-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		E34638D32E9558FA00B33EF8 /* Exceptions for "GG-iOS" folder in "GG-iOS" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Global/Info.plist,
+			);
+			target = E390FF772E8D37CD00D6DA57 /* GG-iOS */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		E390FF7A2E8D37CD00D6DA57 /* GG-iOS */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				E34638D32E9558FA00B33EF8 /* Exceptions for "GG-iOS" folder in "GG-iOS" target */,
+			);
 			path = "GG-iOS";
 			sourceTree = "<group>";
 		};
@@ -272,6 +285,7 @@
 				DEVELOPMENT_TEAM = 7KX4HGAQ77;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "GG-iOS/Global/Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -301,6 +315,7 @@
 				DEVELOPMENT_TEAM = 7KX4HGAQ77;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "GG-iOS/Global/Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
