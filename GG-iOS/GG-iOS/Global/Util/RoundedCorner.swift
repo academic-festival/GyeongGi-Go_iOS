@@ -5,6 +5,7 @@
 //  Created by 김승원 on 10/8/25.
 //
 
+import UIKit
 import SwiftUI
 
 struct RoundedCorner: Shape {
