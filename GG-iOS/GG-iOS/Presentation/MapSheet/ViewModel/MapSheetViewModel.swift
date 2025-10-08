@@ -22,9 +22,8 @@ final class MapSheetViewModel: ObservableObject {
     ]
     
     // 임시 카메라 위치
-    let initialLocation = CLLocationCoordinate2D(latitude: 37.5598, longitude: 126.9770)
-    let span = MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
-    
+    private let initialLocation = CLLocationCoordinate2D(latitude: 37.5598, longitude: 126.9770)
+    private let span = MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
     private let spanRate: Double = 0.45
     
     // MARK: - Initializer
@@ -42,7 +41,6 @@ final class MapSheetViewModel: ObservableObject {
 // MARK: - Functions
 
 extension MapSheetViewModel {
-    
     func selectMarker(_ selectedPlace: MapPlace) {
         for index in mapPlaces.indices {
             if mapPlaces[index].id == selectedPlace.id {
