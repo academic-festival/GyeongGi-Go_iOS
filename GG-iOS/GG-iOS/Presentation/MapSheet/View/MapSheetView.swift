@@ -12,6 +12,7 @@ struct MapSheetView: View {
     
     // MARK: - Properties
     
+    @EnvironmentObject private var appCoordinator: AppCoordinator
     @StateObject private var viewModel = MapSheetViewModel()
     
     // MARK: - Body
@@ -72,34 +73,45 @@ extension MapSheetView {
     
     private var topContent: some View {
         Button {
-            
+            // TODO: - list일 때 sheet 내리기, detail일 때 list로 바꾸기
         } label: {
-            ZStack(alignment: .center) {
-                Capsule()
-                    .frame(width: 121.adjustedWidth, height: 34.adjustedHeight)
-                    .foregroundStyle(.gray0)
-                    .addBorder(.capsule, borderColor: .gray200, borderWidth: 1)
+            HStack(alignment: .center, spacing: 8.adjustedWidth) {
+                Image(appCoordinator.sheetState == .list ? .showMapIcon : .showListIcon)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 16.adjustedWidth, height: 16.adjustedHeight)
                 
-                HStack(alignment: .center, spacing: 8.adjustedWidth) {
-                    Image(.showMapIcon)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 16.adjustedWidth, height: 16.adjustedHeight)
-                    
-                    Text("show map")
-                        .applyGGFont(.body02)
-                        .foregroundStyle(.textNatural)
-                }
+                Text(appCoordinator.sheetState == .list ? "Show map" : "Show list")
+                    .applyGGFont(.body02)
+                    .foregroundStyle(.textNatural)
             }
+            .padding(.horizontal, 16.adjustedWidth)
+            .padding(.vertical, 8.adjustedHeight)
+            .background(.gray0)
+            .capsuleClipped()
+            .addBorder(.capsule, borderColor: .gray200, borderWidth: 1)
+            .animation(.easeInOut(duration: 0.1), value: appCoordinator.sheetState)
         }
         .buttonStyle(.plain)
     }
     
     private var sheetContent: some View {
-        Text("sheet Content")
+        Group {
+            switch appCoordinator.sheetState {
+            case .list:
+                PlaceListView() {
+                    appCoordinator.switchTab(to: .detail)
+                }
+            case .detail:
+                PlaceDetailView() {
+                    appCoordinator.switchTab(to: .list)
+                }
+            }
+        }
     }
 }
 
 #Preview {
     MapSheetView()
+        .environmentObject(AppCoordinator())
 }
