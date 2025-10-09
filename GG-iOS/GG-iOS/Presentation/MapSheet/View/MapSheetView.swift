@@ -68,12 +68,18 @@ extension MapSheetView {
                 .frame(width: 304.adjustedWidth)
                 .padding(.horizontal, 16.adjustedWidth)
         }
-            
     }
     
     private var topContent: some View {
         Button {
             // TODO: - list일 때 sheet 내리기, detail일 때 list로 바꾸기
+            switch appCoordinator.sheetState {
+            case .list:
+                break
+                // TODO: - 바텀시트 내리기
+            case .detail:
+                appCoordinator.switchTab(to: .list)
+            }
         } label: {
             HStack(alignment: .center, spacing: 8.adjustedWidth) {
                 Image(appCoordinator.sheetState == .list ? .showMapIcon : .showListIcon)
@@ -99,9 +105,7 @@ extension MapSheetView {
         Group {
             switch appCoordinator.sheetState {
             case .list:
-                PlaceListView() {
-                    appCoordinator.switchTab(to: .detail)
-                }
+                PlaceListView()
             case .detail:
                 PlaceDetailView() {
                     appCoordinator.switchTab(to: .list)

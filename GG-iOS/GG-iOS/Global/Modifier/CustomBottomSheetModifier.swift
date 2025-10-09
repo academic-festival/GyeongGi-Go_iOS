@@ -15,7 +15,7 @@ struct CustomBottomSheetModifier<TopContent: View, SheetContent: View>: ViewModi
     @State private var topContentOpacity: Double = 1.0
     
     private let defaultHeight: CGFloat = 400.adjustedHeight
-    private let minimumHeight: CGFloat = 100.adjustedHeight
+    private let minimumHeight: CGFloat = 110.adjustedHeight
     private let maximumHeight: CGFloat = 692.adjustedHeight
     
     private let topContent: () -> TopContent
@@ -61,7 +61,7 @@ extension CustomBottomSheetModifier {
                 .capsuleClipped()
         }
         .frame(maxWidth: .infinity)
-        .frame(height: 20.adjustedHeight)
+        .frame(height: 37.adjustedHeight)
     }
     
     private var sheet: some View {
