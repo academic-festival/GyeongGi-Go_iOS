@@ -9,7 +9,7 @@ import SwiftUI
 
 struct PlaceDetailView: View {
     
-    // MARK: - Propertiew
+    // MARK: - Properties
     
     // MARK: - Initializer
     
