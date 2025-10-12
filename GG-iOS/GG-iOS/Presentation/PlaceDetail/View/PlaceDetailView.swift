@@ -134,7 +134,7 @@ extension PlaceDetailView {
             Text("The name was changed to Suwon Dohobu (護府) in the 17th year of King Jeongjo's reign (1793). It also refers to the fortress built here. In 1789, King Jeongjo moved the 園 of Crown Prince Jangheon (莊獻), his birth The name was changed to Suwon Dohobu (護府) in the 17th year of King Jeongjo's reign (1793). It also refers to the fortress built here. In 1789, King Jeongjo moved the 園 of Crown Prince Jangheon (莊獻), his birth,")
                 .applyGGFont(.body02)
                 .foregroundStyle(.textNormal)
-                .frame(maxWidth: .infinity, alignment: .leading)
+                .frame(width: 335.adjustedWidth, alignment: .leading)
         }
         .padding(.horizontal, 20.adjustedWidth)
     }
