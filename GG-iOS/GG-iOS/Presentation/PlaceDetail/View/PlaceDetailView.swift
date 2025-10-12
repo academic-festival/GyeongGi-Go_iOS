@@ -136,7 +136,6 @@ extension PlaceDetailView {
                 .foregroundStyle(.textNormal)
                 .frame(width: 335.adjustedWidth, alignment: .leading)
         }
-        .padding(.horizontal, 20.adjustedWidth)
     }
     
     private var scrollSpacer: some View {
