@@ -75,7 +75,7 @@ extension CustomBottomSheetModifier {
         .background(.gray0)
         .cornerRadius(20, corners: [.topLeft, .topRight])
         .shadow(color: .gray900.opacity(0.15), radius: 10, x: 0, y: 0)
-        .simultaneousGesture(dragGesture)
+        .gesture(dragGesture)
     }
 }
 

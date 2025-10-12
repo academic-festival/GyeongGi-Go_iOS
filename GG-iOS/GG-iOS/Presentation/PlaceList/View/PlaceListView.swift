@@ -19,7 +19,7 @@ struct PlaceListView: View {
     
     var body: some View {
         ScrollView(.vertical) {
-            VStack(alignment: .leading, spacing: 24.adjustedHeight) {
+            VStack(alignment: .center, spacing: 24.adjustedHeight) {
                 header
                 
                 placeList
