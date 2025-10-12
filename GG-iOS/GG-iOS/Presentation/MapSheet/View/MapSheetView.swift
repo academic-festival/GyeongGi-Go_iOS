@@ -107,9 +107,7 @@ extension MapSheetView {
             case .list:
                 PlaceListView()
             case .detail:
-                PlaceDetailView() {
-                    appCoordinator.switchTab(to: .list)
-                }
+                PlaceDetailView()
             }
         }
     }
