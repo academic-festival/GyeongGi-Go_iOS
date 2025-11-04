@@ -39,7 +39,7 @@ struct PlaceDetailView: View {
 
 extension PlaceDetailView {
     private var header: some View {
-        PlaceCuratorHeader() {
+        PlaceCuratorHeader(.detail) {
             // TODO: - 큐레이터 연결
         }
         .padding(.horizontal, 20.adjustedWidth)

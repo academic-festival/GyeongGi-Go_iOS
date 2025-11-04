@@ -32,12 +32,10 @@ struct PlaceListView: View {
 
 extension PlaceListView {
     private var header: some View {
-        PlaceCuratorHeader() {
-            // TODO: - 큐레이터 연결
-        }
-        .padding(.horizontal, 20.adjustedWidth)
-        .padding(.top, 20.adjustedHeight)
-        .frame(maxWidth: .infinity, alignment: .leading)
+        PlaceCuratorHeader(.list)
+            .padding(.horizontal, 20.adjustedWidth)
+            .padding(.top, 20.adjustedHeight)
+            .frame(maxWidth: .infinity, alignment: .leading)
     }
     
     private var placeList: some View {
