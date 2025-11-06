@@ -105,9 +105,11 @@ extension MapSheetView {
         Group {
             switch appCoordinator.sheetState {
             case .list:
-                PlaceListView()
+                PlaceListView(viewModel: viewModel) {
+                    appCoordinator.switchTab(to: .detail)
+                }
             case .detail:
-                PlaceDetailView()
+                PlaceDetailView(viewModel: viewModel)
             }
         }
     }

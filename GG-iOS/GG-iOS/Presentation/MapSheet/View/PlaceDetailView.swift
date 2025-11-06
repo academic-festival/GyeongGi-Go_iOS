@@ -11,7 +11,13 @@ struct PlaceDetailView: View {
     
     // MARK: - Properties
     
+    @ObservedObject private var viewModel: MapSheetViewModel
+    
     // MARK: - Initializer
+    
+    init(viewModel: MapSheetViewModel) {
+        self.viewModel = viewModel
+    }
     
     // MARK: - Body
     
@@ -147,5 +153,5 @@ extension PlaceDetailView {
 }
 
 #Preview {
-    PlaceDetailView()
+    PlaceDetailView(viewModel: MapSheetViewModel())
 }

@@ -11,9 +11,16 @@ struct PlaceListView: View {
 
     // MARK: - Properties
     
-    @EnvironmentObject private var appCoordinator: AppCoordinator
+    @ObservedObject private var viewModel: MapSheetViewModel
+    
+    private var onTap: (() -> Void)?
     
     // MARK: - Initializer
+    
+    init(viewModel: MapSheetViewModel, onTap: (() -> Void)? = nil) {
+        self.viewModel = viewModel
+        self.onTap = onTap
+    }
     
     // MARK: - Body
     
@@ -41,7 +48,7 @@ extension PlaceListView {
     private var placeList: some View {
         VStack(alignment: .center, spacing: 20.adjustedHeight) {
             PlaceListRow() {
-                appCoordinator.switchTab(to: .detail)
+                onTap?()
             }
             PlaceListRow()
         }
@@ -50,6 +57,5 @@ extension PlaceListView {
 }
 
 #Preview {
-    PlaceListView()
-        .environmentObject(AppCoordinator())
+    PlaceListView(viewModel: MapSheetViewModel())
 }
