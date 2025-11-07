@@ -15,11 +15,7 @@ final class MapSheetViewModel: ObservableObject {
     @Published var cameraPosition: MapCameraPosition
     
     // 지도에 표시할 임시 마커
-    @Published var mapPlaces: [MapPlace] = [
-        MapPlace(name: "서울역", coordinate: CLLocationCoordinate2D(latitude: 37.5547, longitude: 126.9707)),
-        MapPlace(name: "남대문시장", coordinate: CLLocationCoordinate2D(latitude: 37.5598, longitude: 126.9770)),
-        MapPlace(name: "회현역", coordinate: CLLocationCoordinate2D(latitude: 37.5584, longitude: 126.9780))
-    ]
+    @Published var mapPlaces: [MapPlace] = MapPlace.mockData
     
     // 임시 카메라 위치
     private let initialLocation = CLLocationCoordinate2D(latitude: 37.5598, longitude: 126.9770)
@@ -61,5 +57,21 @@ extension MapSheetViewModel {
             
             cameraPosition = .region(MKCoordinateRegion(center: adjustedCenter, span: span))
         }
+    }
+}
+
+// MARK: - TempImageUrlString
+
+enum TempImageUrlString {
+    static func imageUrlString() -> String {
+        return "https://www.google.com/url?sa=t&source=web&rct=j&url=https%3A%2F%2Fgjicp.ggcf.kr%2FmediaObjects%2F257&ved=0CBUQjRxqFwoTCOCV-_yV35ADFQAAAAAdAAAAABAI&opi=89978449"
+    }
+    
+    static func threeImageUrlStrings() -> [String] {
+        return [
+            imageUrlString(),
+            imageUrlString(),
+            imageUrlString()
+        ]
     }
 }
