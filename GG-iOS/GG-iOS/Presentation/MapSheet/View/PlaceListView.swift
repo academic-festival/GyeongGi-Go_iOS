@@ -11,9 +11,13 @@ struct PlaceListView: View {
 
     // MARK: - Properties
     
-    @EnvironmentObject private var appCoordinator: AppCoordinator
+    @ObservedObject private var viewModel: MapSheetViewModel
     
     // MARK: - Initializer
+    
+    init(viewModel: MapSheetViewModel) {
+        self.viewModel = viewModel
+    }
     
     // MARK: - Body
     
@@ -24,6 +28,7 @@ struct PlaceListView: View {
                 
                 placeList
             }
+            .padding(.bottom, 40.adjustedHeight)
         }
     }
 }
@@ -40,16 +45,21 @@ extension PlaceListView {
     
     private var placeList: some View {
         VStack(alignment: .center, spacing: 20.adjustedHeight) {
-            PlaceListRow() {
-                appCoordinator.switchTab(to: .detail)
+            ForEach(viewModel.mapPlaces) { mapPlace in
+                PlaceListRow(
+                    title: mapPlace.name,
+                    address: mapPlace.address,
+                    imageUrlStrings: mapPlace.imageUrlStrings,
+                    onTap: {
+                        viewModel.dispatch(.selectPlace(mapPlace))
+                    }
+                )
             }
-            PlaceListRow()
         }
         .padding(.horizontal, 20.adjustedWidth)
     }
 }
 
 #Preview {
-    PlaceListView()
-        .environmentObject(AppCoordinator())
+    PlaceListView(viewModel: MapSheetViewModel())
 }

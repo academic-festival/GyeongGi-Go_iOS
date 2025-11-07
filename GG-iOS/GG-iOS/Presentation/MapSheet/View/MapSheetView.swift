@@ -42,8 +42,7 @@ extension MapSheetView {
             ForEach($viewModel.mapPlaces) { $mapPlace in
                 Annotation(mapPlace.name, coordinate: mapPlace.coordinate) {
                     GGMarker(isSelected: mapPlace.isSelected) {
-                        viewModel.selectMarker(mapPlace)
-                        viewModel.setCameraPosition(coordinate: mapPlace.coordinate)
+                        viewModel.dispatch(.selectMarker(mapPlace))
                     }
                 }
                 .annotationTitles(.hidden)
@@ -73,21 +72,21 @@ extension MapSheetView {
     private var topContent: some View {
         Button {
             // TODO: - list일 때 sheet 내리기, detail일 때 list로 바꾸기
-            switch appCoordinator.sheetState {
+            switch viewModel.sheetState {
             case .list:
                 break
                 // TODO: - 바텀시트 내리기
             case .detail:
-                appCoordinator.switchTab(to: .list)
+                viewModel.dispatch(.switchSheetState(.detail))
             }
         } label: {
             HStack(alignment: .center, spacing: 8.adjustedWidth) {
-                Image(appCoordinator.sheetState == .list ? .showMapIcon : .showListIcon)
+                Image(viewModel.sheetState == .list ? .showMapIcon : .showListIcon)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 16.adjustedWidth, height: 16.adjustedHeight)
                 
-                Text(appCoordinator.sheetState == .list ? "Show map" : "Show list")
+                Text(viewModel.sheetState == .list ? "Show map" : "Show list")
                     .applyGGFont(.body02)
                     .foregroundStyle(.textNatural)
             }
@@ -96,18 +95,18 @@ extension MapSheetView {
             .background(.gray0)
             .capsuleClipped()
             .addBorder(.capsule, borderColor: .gray200, borderWidth: 1)
-            .animation(.easeInOut(duration: 0.1), value: appCoordinator.sheetState)
+            .animation(.easeInOut(duration: 0.1), value: viewModel.sheetState)
         }
         .buttonStyle(.plain)
     }
     
     private var sheetContent: some View {
         Group {
-            switch appCoordinator.sheetState {
+            switch viewModel.sheetState {
             case .list:
-                PlaceListView()
+                PlaceListView(viewModel: viewModel)
             case .detail:
-                PlaceDetailView()
+                PlaceDetailView(viewModel: viewModel)
             }
         }
     }

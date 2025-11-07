@@ -13,7 +13,6 @@ final class AppCoordinator: ObservableObject {
     
     @Published var path: [AppDestination] = []
     @Published var root: RootDestination = .sheet
-    @Published var sheetState: SheetState = .list
     
     // MARK: - Functions
     
@@ -27,10 +26,6 @@ final class AppCoordinator: ObservableObject {
     
     func goToRoot() {
         path.removeAll()
-    }
-    
-    func switchTab(to sheetState: SheetState) {
-        self.sheetState = sheetState
     }
     
     func changeRoot(to root: RootDestination) {
