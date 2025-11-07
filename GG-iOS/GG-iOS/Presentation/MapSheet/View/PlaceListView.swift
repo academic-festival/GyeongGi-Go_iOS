@@ -28,6 +28,7 @@ struct PlaceListView: View {
                 
                 placeList
             }
+            .padding(.bottom, 40.adjustedHeight)
         }
     }
 }
