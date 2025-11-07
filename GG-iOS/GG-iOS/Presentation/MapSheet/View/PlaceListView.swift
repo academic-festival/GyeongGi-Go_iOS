@@ -50,7 +50,7 @@ extension PlaceListView {
                     address: mapPlace.address,
                     imageUrlStrings: mapPlace.imageUrlStrings,
                     onTap: {
-                        viewModel.sheetState = .detail
+                        viewModel.dispatch(.selectPlace(mapPlace))
                     }
                 )
             }

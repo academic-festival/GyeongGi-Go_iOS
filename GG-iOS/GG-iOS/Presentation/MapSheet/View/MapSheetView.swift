@@ -42,8 +42,7 @@ extension MapSheetView {
             ForEach($viewModel.mapPlaces) { $mapPlace in
                 Annotation(mapPlace.name, coordinate: mapPlace.coordinate) {
                     GGMarker(isSelected: mapPlace.isSelected) {
-                        viewModel.selectMarker(mapPlace)
-                        viewModel.setCameraPosition(coordinate: mapPlace.coordinate)
+                        viewModel.dispatch(.selectMarker(mapPlace))
                     }
                 }
                 .annotationTitles(.hidden)
@@ -78,7 +77,7 @@ extension MapSheetView {
                 break
                 // TODO: - 바텀시트 내리기
             case .detail:
-                viewModel.sheetState = .list
+                viewModel.dispatch(.switchSheetState(.detail))
             }
         } label: {
             HStack(alignment: .center, spacing: 8.adjustedWidth) {
