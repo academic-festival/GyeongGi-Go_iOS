@@ -7,15 +7,28 @@
 
 import SwiftUI
 
+import Kingfisher
+
 struct PlaceListRow: View {
     
     // MARK: - Properties
     
+    private let title: String
+    private let address: String
+    private let imageUrlStrings: [String]
     private var onTap: (() -> Void)?
     
     // MARK: - Initializer
     
-    init(onTap: (() -> Void)? = nil) {
+    init(
+        title: String,
+        address: String,
+        imageUrlStrings: [String],
+        onTap: (() -> Void)? = nil
+    ) {
+        self.title = title
+        self.address = address
+        self.imageUrlStrings = imageUrlStrings
         self.onTap = onTap
     }
     
@@ -26,10 +39,10 @@ struct PlaceListRow: View {
             onTap?()
         } label: {
             VStack(alignment: .leading, spacing: 0) {
-                title
+                titleSection
                     .padding(.bottom, 4.adjustedHeight)
                 
-                address
+                addressSection
                     .padding(.bottom, 12.adjustedHeight)
                 
                 photos
@@ -42,13 +55,13 @@ struct PlaceListRow: View {
 // MARK: - Subviews
 
 extension PlaceListRow {
-    private var title: some View {
-        Text("Suwon Hwaseong")
+    private var titleSection: some View {
+        Text(title)
             .applyGGFont(.heading02)
             .foregroundStyle(.textNatural)
     }
     
-    private var address: some View {
+    private var addressSection: some View {
         HStack(alignment: .center, spacing: 4.adjustedWidth) {
             Image(.address12Icon)
                 .renderingMode(.template)
@@ -57,7 +70,7 @@ extension PlaceListRow {
                 .frame(width: 12.adjustedWidth, height: 12.adjustedHeight)
                 .foregroundStyle(.textLight)
             
-            Text("320-2 Hwajeong-dong, Jangan-gu, Suwon-si")
+            Text(address)
                 .applyGGFont(.label02)
                 .foregroundStyle(.textLight)
                 .lineLimit(1)
@@ -67,8 +80,8 @@ extension PlaceListRow {
     
     private var photos: some View {
         HStack(alignment: .center, spacing: 2.5.adjustedWidth) {
-            ForEach(0..<3) { _ in
-                Image(.temp)
+            ForEach(imageUrlStrings, id: \.self) { imageString in
+                KFImage(URL(string: imageString))
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(height: 80.adjustedHeight)
@@ -80,5 +93,9 @@ extension PlaceListRow {
 }
 
 #Preview {
-    PlaceListRow()
+    PlaceListRow(
+        title: "Suwon Hwaseong",
+        address: "320-2 Hwajeong-dong, Jangan-gu, Suwon-si",
+        imageUrlStrings: TempImageUrlString.threeImageUrlStrings()
+    )
 }

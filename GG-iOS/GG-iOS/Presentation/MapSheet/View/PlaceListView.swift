@@ -13,13 +13,10 @@ struct PlaceListView: View {
     
     @ObservedObject private var viewModel: MapSheetViewModel
     
-    private var onTap: (() -> Void)?
-    
     // MARK: - Initializer
     
-    init(viewModel: MapSheetViewModel, onTap: (() -> Void)? = nil) {
+    init(viewModel: MapSheetViewModel) {
         self.viewModel = viewModel
-        self.onTap = onTap
     }
     
     // MARK: - Body
@@ -47,10 +44,16 @@ extension PlaceListView {
     
     private var placeList: some View {
         VStack(alignment: .center, spacing: 20.adjustedHeight) {
-            PlaceListRow() {
-                onTap?()
+            ForEach(viewModel.mapPlaces) { mapPlace in
+                PlaceListRow(
+                    title: mapPlace.name,
+                    address: mapPlace.address,
+                    imageUrlStrings: mapPlace.imageUrlStrings,
+                    onTap: {
+                        viewModel.sheetState = .detail
+                    }
+                )
             }
-            PlaceListRow()
         }
         .padding(.horizontal, 20.adjustedWidth)
     }
