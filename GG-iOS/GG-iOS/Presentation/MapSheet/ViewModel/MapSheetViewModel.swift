@@ -18,6 +18,7 @@ final class MapSheetViewModel: ObservableObject {
     @Published var bottomSheetHeight: CGFloat = SheetState.defaultHeight
     
     // 임시 카메라 위치
+    // TODO: - 바텀시트 내려감에 따라 지도 중심점 조정 필요
     private let initialLocation = CLLocationCoordinate2D(latitude: 37.5598, longitude: 126.9770)
     private let span = MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
     private let spanRate: Double = 0.45
@@ -58,6 +59,10 @@ final class MapSheetViewModel: ObservableObject {
             setCameraPosition(coordinate: mapPlace.coordinate)
             sheetState = .detail
             
+            withAnimation(.easeInOut(duration: 0.3)) {
+                bottomSheetHeight = SheetState.defaultHeight
+            }
+            
         case .selectPlace(let mapPlace):
             selectMarker(mapPlace)
             setCameraPosition(coordinate: mapPlace.coordinate)
@@ -66,7 +71,6 @@ final class MapSheetViewModel: ObservableObject {
         case .switchSheetState(let sheetState):
             switch sheetState {
             case .list:
-                // TODO: - 시트 내려가기 구현
                 break
                 
             case .detail:

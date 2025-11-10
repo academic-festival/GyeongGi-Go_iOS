@@ -82,7 +82,14 @@ extension MapSheetView {
                     }
                 }
             case .detail:
-                viewModel.dispatch(.switchSheetState(.detail))
+                
+                if viewModel.isBottomSheetMinimumHeight() {
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        viewModel.dispatch(.showList)
+                    }
+                } else {
+                    viewModel.dispatch(.switchSheetState(.detail))
+                }
             }
         } label: {
             HStack(alignment: .center, spacing: 8.adjustedWidth) {
