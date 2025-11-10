@@ -8,15 +8,15 @@
 import SwiftUI
 
 enum AppDestination: Hashable {
-    case temp
+    case chat
 }
 
 extension AppDestination {
     @ViewBuilder
     func build() -> some View {
         switch self {
-        case .temp:
-            Text("Temp View")
+        case .chat:
+            ChatView()
         }
     }
 }
