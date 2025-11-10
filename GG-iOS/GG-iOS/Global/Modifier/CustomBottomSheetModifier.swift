@@ -11,12 +11,8 @@ struct CustomBottomSheetModifier<TopContent: View, SheetContent: View>: ViewModi
     
     // MARK: - Properties
     
-    @State private var currentHeight: CGFloat = 400.adjustedHeight
+    @Binding private var currentHeight: CGFloat
     @State private var topContentOpacity: Double = 1.0
-    
-    private let defaultHeight: CGFloat = 400.adjustedHeight
-    private let minimumHeight: CGFloat = 110.adjustedHeight
-    private let maximumHeight: CGFloat = 692.adjustedHeight
     
     private let topContent: () -> TopContent
     private let sheetContent: () -> SheetContent
@@ -24,9 +20,11 @@ struct CustomBottomSheetModifier<TopContent: View, SheetContent: View>: ViewModi
     // MARK: - Initializer
     
     init(
+        currentHeight: Binding<CGFloat>,
         @ViewBuilder topContent: @escaping () -> TopContent,
         @ViewBuilder sheetContent: @escaping () -> SheetContent
     ) {
+        self._currentHeight = currentHeight
         self.topContent = topContent
         self.sheetContent = sheetContent
     }
@@ -85,10 +83,10 @@ extension CustomBottomSheetModifier {
     private func updateTopContentOpacity() {
         let fadeRange: CGFloat = 70.adjustedHeight
         
-        if currentHeight <= maximumHeight - fadeRange {
+        if currentHeight <= SheetState.maximumHeight - fadeRange {
             topContentOpacity = 1.0
-        } else if currentHeight <= maximumHeight {
-            topContentOpacity = 1.0 - ((currentHeight - (maximumHeight - fadeRange)) / fadeRange)
+        } else if currentHeight <= SheetState.maximumHeight {
+            topContentOpacity = 1.0 - ((currentHeight - (SheetState.maximumHeight - fadeRange)) / fadeRange)
         } else {
             topContentOpacity = 0.0
         }
@@ -102,22 +100,22 @@ extension CustomBottomSheetModifier {
         DragGesture()
             .onChanged { value in
                 let newHeight = currentHeight - value.translation.height
-                let clampedHeight = min(max(newHeight, minimumHeight), maximumHeight)
+                let clampedHeight = min(max(newHeight, SheetState.minimumHeight), SheetState.maximumHeight)
                 currentHeight = clampedHeight
                 
                 updateTopContentOpacity()
             }
             .onEnded { value in
                 let newHeight = currentHeight - value.translation.height
-                let midPoint = (defaultHeight + maximumHeight) / 2
+                let midPoint = (SheetState.defaultHeight + SheetState.maximumHeight) / 2
                 
                 withAnimation(.easeInOut(duration: 0.3)) {
-                    if newHeight <= defaultHeight - 200.adjustedHeight {
-                        currentHeight = minimumHeight
+                    if newHeight <= SheetState.defaultHeight - 200.adjustedHeight {
+                        currentHeight = SheetState.minimumHeight
                     } else if newHeight > midPoint {
-                        currentHeight = maximumHeight
+                        currentHeight = SheetState.maximumHeight
                     } else {
-                        currentHeight = defaultHeight
+                        currentHeight = SheetState.defaultHeight
                     }
                     
                     updateTopContentOpacity()
@@ -130,11 +128,13 @@ extension CustomBottomSheetModifier {
 
 extension View {
     func customBottomSheet<TopContent: View, SheetContent: View>(
+        currentHeight: Binding<CGFloat>,
         @ViewBuilder topContent: @escaping () -> TopContent,
         @ViewBuilder sheetContent: @escaping () -> SheetContent
     ) -> some View {
         self.modifier(
             CustomBottomSheetModifier(
+                currentHeight: currentHeight,
                 topContent: topContent,
                 sheetContent: sheetContent
             )

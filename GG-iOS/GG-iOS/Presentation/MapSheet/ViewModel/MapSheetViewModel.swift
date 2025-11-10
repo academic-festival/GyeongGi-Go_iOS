@@ -15,6 +15,7 @@ final class MapSheetViewModel: ObservableObject {
     @Published var cameraPosition: MapCameraPosition
     @Published var sheetState: SheetState = .list
     @Published var mapPlaces: [MapPlace] = MapPlace.mockData
+    @Published var bottomSheetHeight: CGFloat = SheetState.defaultHeight
     
     // 임시 카메라 위치
     private let initialLocation = CLLocationCoordinate2D(latitude: 37.5598, longitude: 126.9770)
@@ -24,6 +25,8 @@ final class MapSheetViewModel: ObservableObject {
     // MARK: - Action
     
     enum Action {
+        case showMap
+        case showList
         case selectMarker(_ mapPlace: MapPlace)
         case selectPlace(_ mapPlace: MapPlace)
         case switchSheetState(_ sheetState: SheetState)
@@ -44,6 +47,12 @@ final class MapSheetViewModel: ObservableObject {
     
     func dispatch(_ action: Action) {
         switch action {
+        case .showMap:
+            bottomSheetHeight = SheetState.minimumHeight
+            
+        case .showList:
+            bottomSheetHeight = SheetState.defaultHeight
+            
         case .selectMarker(let mapPlace):
             selectMarker(mapPlace)
             setCameraPosition(coordinate: mapPlace.coordinate)
@@ -68,7 +77,7 @@ final class MapSheetViewModel: ObservableObject {
     }
 }
 
-// MARK: - Functions
+// MARK: - Private Functions
 
 private extension MapSheetViewModel {
     func selectMarker(_ selectedPlace: MapPlace) {
@@ -97,6 +106,14 @@ private extension MapSheetViewModel {
             
             cameraPosition = .region(MKCoordinateRegion(center: adjustedCenter, span: span))
         }
+    }
+}
+
+// MARK: - Functions
+
+extension MapSheetViewModel {
+    func isBottomSheetMinimumHeight() -> Bool {
+        return bottomSheetHeight == SheetState.minimumHeight
     }
 }
 
