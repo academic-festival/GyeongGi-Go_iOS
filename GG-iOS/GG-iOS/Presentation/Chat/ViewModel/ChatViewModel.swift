@@ -13,6 +13,7 @@ final class ChatViewModel: ObservableObject {
     
     @Published var placeName: String = ""
     @Published var address: String = ""
+    @Published var chatMessages: [ChatMessage] = []
     
     // MARK: - Action
 

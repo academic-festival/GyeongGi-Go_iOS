@@ -20,7 +20,8 @@ struct ChatView: View {
         VStack(alignment: .center, spacing: 0) {
             header
             
-            Spacer()
+            chat
+                .background(.red)
             
             questionList
         }
@@ -64,6 +65,11 @@ extension ChatView {
                 .frame(height: 1.adjustedHeight)
                 .foregroundStyle(.gray100)
         }
+    }
+    
+    private var chat: some View {
+        Text("Chat")
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
     
     private var questionList: some View {
