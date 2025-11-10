@@ -106,7 +106,9 @@ extension MapSheetView {
             case .list:
                 PlaceListView(viewModel: viewModel)
             case .detail:
-                PlaceDetailView(viewModel: viewModel)
+                PlaceDetailView(viewModel: viewModel) {
+                    appCoordinator.navigate(to: .chat)
+                }
             }
         }
     }
