@@ -68,7 +68,7 @@ extension ChatView {
     
     private var chat: some View {
         ScrollView(.vertical) {
-            LazyVStack(alignment: .center, spacing: 12.adjustedWidth) {
+            LazyVStack(alignment: .center, spacing: 12.adjustedHeight) {
                 ForEach(viewModel.chatMessages) { message in
                     MessageBubble(chatMessage: message)
                 }
