@@ -14,10 +14,12 @@ struct GGMarker: View {
     private let isSelected: Bool
     private let onTapped: (() -> Void)?
     
-    private let defaultWidth: CGFloat = 24.adjustedWidth
-    private let defaultHeight: CGFloat = 24.adjustedHeight
+    private let defaultWidth: CGFloat = 24.adjusted
+    private let defaultHeight: CGFloat = 24.adjusted
+    
     private let selectedWidth: CGFloat = 38.adjustedWidth
     private let selectedHeight: CGFloat = 52.adjustedHeight
+    
     private let heightOffset: CGFloat = 20.adjustedHeight
     
     // MARK: - Initializer
@@ -37,6 +39,7 @@ struct GGMarker: View {
                 Image(isSelected ? .markerSelected : .markerDefault)
                     .resizable()
                     .renderingMode(.original)
+                    .aspectRatio(contentMode: .fit)
                     .frame(
                         width: isSelected ? selectedWidth : defaultWidth,
                         height: isSelected ? selectedHeight : defaultHeight

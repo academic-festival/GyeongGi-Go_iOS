@@ -39,7 +39,7 @@ extension InformationWithIconRow {
             .resizable()
             .renderingMode(.original)
             .aspectRatio(contentMode: .fit)
-            .frame(width: 16.adjustedWidth, height: 16.adjustedHeight)
+            .frame(width: 16.adjusted, height: 16.adjusted)
             .padding(.top, 2.adjustedHeight)
     }
     

@@ -84,7 +84,7 @@ extension MapSheetView {
                 Image(viewModel.sheetState == .list ? .showMapIcon : .showListIcon)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(width: 16.adjustedWidth, height: 16.adjustedHeight)
+                    .frame(width: 16.adjusted, height: 16.adjusted)
                 
                 Text(viewModel.sheetState == .list ? "Show map" : "Show list")
                     .applyGGFont(.body02)
