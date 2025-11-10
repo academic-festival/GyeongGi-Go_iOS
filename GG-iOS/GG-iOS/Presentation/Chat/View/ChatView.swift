@@ -21,7 +21,6 @@ struct ChatView: View {
             header
             
             chat
-                .background(.red)
             
             questionList
         }
@@ -68,8 +67,16 @@ extension ChatView {
     }
     
     private var chat: some View {
-        Text("Chat")
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        ScrollView(.vertical) {
+            LazyVStack(alignment: .center, spacing: 12.adjustedWidth) {
+                ForEach(viewModel.chatMessages) { message in
+                    MessageBubble(chatMessage: message)
+                }
+            }
+            .padding(.vertical, 28.adjustedHeight)
+        }
+        .frame(maxWidth: .infinity)
+        .background(.gray0)
     }
     
     private var questionList: some View {
