@@ -39,6 +39,7 @@ struct GGMarker: View {
                 Image(isSelected ? .markerSelected : .markerDefault)
                     .resizable()
                     .renderingMode(.original)
+                    .aspectRatio(contentMode: .fit)
                     .frame(
                         width: isSelected ? selectedWidth : defaultWidth,
                         height: isSelected ? selectedHeight : defaultHeight
