@@ -19,6 +19,10 @@ struct ChatView: View {
     var body: some View {
         VStack(alignment: .center, spacing: 0) {
             header
+            
+            Spacer()
+            
+            questionList
         }
         .customNavigationBar(.chat(backAction: {
             appCoordinator.goBack()
@@ -59,6 +63,45 @@ extension ChatView {
                 .frame(maxWidth: .infinity)
                 .frame(height: 1.adjustedHeight)
                 .foregroundStyle(.gray100)
+        }
+    }
+    
+    private var questionList: some View {
+        VStack(alignment: .center, spacing: 12.adjustedHeight) {
+            Rectangle()
+                .frame(maxWidth: .infinity)
+                .frame(height: 1.adjustedHeight)
+                .foregroundStyle(.gray100)
+            
+            VStack(alignment: .center, spacing: 16.adjustedHeight) {
+                HStack(alignment: .center, spacing: 0) {
+                    Text("Select a suggested question")
+                        .applyGGFont(.body02)
+                        .foregroundStyle(.mainOrange500)
+                    
+                    Spacer()
+                    
+                    Button {
+                        
+                    } label: {
+                        Image(.refreshIcon)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 24.adjusted, height: 24.adjusted)
+                    }
+                    .buttonStyle(.plain)
+                }
+                .padding(.horizontal, 24.adjustedWidth)
+                .frame(height: 24.adjustedHeight)
+                
+                // 임시 질문 list
+                VStack(alignment: .center, spacing: 10.adjustedHeight) {
+                    QuestionRow(question: "Are you curious about Suwon Hwaseong?")
+                    QuestionRow(question: "Are you curious about Suwon Hwaseong?")
+                    QuestionRow(question: "Are you curious about Suwon Hwaseong?")
+                }
+                .padding(.horizontal, 27.adjustedWidth)
+            }
         }
     }
 }
