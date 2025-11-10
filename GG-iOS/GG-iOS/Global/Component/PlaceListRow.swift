@@ -67,7 +67,7 @@ extension PlaceListRow {
                 .renderingMode(.template)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .frame(width: 12.adjustedWidth, height: 12.adjustedHeight)
+                .frame(width: 12.adjusted, height: 12.adjusted)
                 .foregroundStyle(.textLight)
             
             Text(address)
