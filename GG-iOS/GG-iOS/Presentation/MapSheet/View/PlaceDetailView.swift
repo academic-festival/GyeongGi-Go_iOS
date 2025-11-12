@@ -13,10 +13,13 @@ struct PlaceDetailView: View {
     
     @ObservedObject private var viewModel: MapSheetViewModel
     
+    private let onTap: (() -> Void)?
+    
     // MARK: - Initializer
     
-    init(viewModel: MapSheetViewModel) {
+    init(viewModel: MapSheetViewModel, onTap: (() -> Void)? = nil) {
         self.viewModel = viewModel
+        self.onTap = onTap
     }
     
     // MARK: - Body
@@ -46,7 +49,7 @@ struct PlaceDetailView: View {
 extension PlaceDetailView {
     private var header: some View {
         PlaceCuratorHeader(.detail) {
-            // TODO: - 큐레이터 연결
+            onTap?()
         }
         .padding(.horizontal, 20.adjustedWidth)
         .padding(.top, 20.adjustedHeight)
