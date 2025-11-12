@@ -18,6 +18,8 @@ enum NetworkError: Error {
     case unknownError // 알 수 없는 에러
 }
 
+// MARK: - Description
+
 extension NetworkError: CustomStringConvertible {
     var description: String {
         switch self {
