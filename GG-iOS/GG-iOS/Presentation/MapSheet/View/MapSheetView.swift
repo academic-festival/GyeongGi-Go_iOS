@@ -21,6 +21,7 @@ struct MapSheetView: View {
         ZStack(alignment: .top) {
             map
                 .customBottomSheet(
+                    currentHeight: $viewModel.bottomSheetHeight,
                     topContent: {
                         topContent
                     },
@@ -71,24 +72,43 @@ extension MapSheetView {
     
     private var topContent: some View {
         Button {
-            // TODO: - list일 때 sheet 내리기, detail일 때 list로 바꾸기
             switch viewModel.sheetState {
             case .list:
-                break
-                // TODO: - 바텀시트 내리기
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    if viewModel.isBottomSheetMinimumHeight() {
+                        viewModel.dispatch(.showList)
+                    } else {
+                        viewModel.dispatch(.showMap)
+                    }
+                }
             case .detail:
-                viewModel.dispatch(.switchSheetState(.detail))
+                
+                if viewModel.isBottomSheetMinimumHeight() {
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        viewModel.dispatch(.showList)
+                    }
+                } else {
+                    viewModel.dispatch(.switchSheetState(.detail))
+                }
             }
         } label: {
             HStack(alignment: .center, spacing: 8.adjustedWidth) {
-                Image(viewModel.sheetState == .list ? .showMapIcon : .showListIcon)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 16.adjusted, height: 16.adjusted)
+                Image(
+                    viewModel.isBottomSheetMinimumHeight()
+                    ? .showListIcon : viewModel.sheetState == .list
+                    ? .showMapIcon : .showListIcon
+                )
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 16.adjusted, height: 16.adjusted)
                 
-                Text(viewModel.sheetState == .list ? "Show map" : "Show list")
-                    .applyGGFont(.body02)
-                    .foregroundStyle(.textNatural)
+                Text(
+                    viewModel.isBottomSheetMinimumHeight()
+                    ? "Show list" : viewModel.sheetState == .list
+                    ? "Show map" : "Show list"
+                )
+                .applyGGFont(.body02)
+                .foregroundStyle(.textNatural)
             }
             .padding(.horizontal, 16.adjustedWidth)
             .padding(.vertical, 8.adjustedHeight)
