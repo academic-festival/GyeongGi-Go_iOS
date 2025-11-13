@@ -17,6 +17,8 @@ final class MapSheetViewModel: ObservableObject {
     @Published var mapPlaces: [MapPlace] = MapPlace.mockData
     @Published var bottomSheetHeight: CGFloat = SheetState.defaultHeight
     
+    private let placeListService: PlaceListAPI
+    
     // 임시 카메라 위치
     // TODO: - 바텀시트 내려감에 따라 지도 중심점 조정 필요
     private let initialLocation = CLLocationCoordinate2D(latitude: 37.5598, longitude: 126.9770)
@@ -35,7 +37,9 @@ final class MapSheetViewModel: ObservableObject {
     
     // MARK: - Initializer
     
-    init() {
+    init(placeListService: PlaceListAPI) {
+        self.placeListService = placeListService
+        
         let adjustedCenter = CLLocationCoordinate2D(
             latitude: initialLocation.latitude - (span.latitudeDelta * spanRate),
             longitude: initialLocation.longitude

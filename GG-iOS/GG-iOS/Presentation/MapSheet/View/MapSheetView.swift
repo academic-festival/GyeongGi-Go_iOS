@@ -13,7 +13,9 @@ struct MapSheetView: View {
     // MARK: - Properties
     
     @EnvironmentObject private var appCoordinator: AppCoordinator
-    @StateObject private var viewModel = MapSheetViewModel()
+    @StateObject private var viewModel = MapSheetViewModel(
+        placeListService: PlaceListService()
+    )
     
     // MARK: - Body
     
