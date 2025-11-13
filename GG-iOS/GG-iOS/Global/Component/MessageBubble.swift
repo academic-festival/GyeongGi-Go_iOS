@@ -13,8 +13,8 @@ struct MessageBubble: View {
     
     private let chatMessage: ChatMessage
     
-    private let horizontalPadding: CGFloat = 24.adjustedWidth
-    private let extraHorizontalPadding: CGFloat = 34.adjustedWidth
+    private let horizontalPadding: CGFloat = 20.adjustedWidth
+    private let extraHorizontalPadding: CGFloat = 59.adjustedWidth
     
     // MARK: - Initializer
     
@@ -42,7 +42,7 @@ extension MessageBubble {
             Image(.chatbotOrangeIcon)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .frame(width: 40.adjusted, height: 40.adjusted)
+                .frame(width: 32.adjusted, height: 32.adjusted)
             
             Text(chatMessage.message)
                 .applyGGFont(.body02)
@@ -74,5 +74,7 @@ extension MessageBubble {
 
 #Preview {
     MessageBubble(chatMessage: ChatMessage(sender: .chatBot, message: "Hello,This is a place where you can feel the charm of Gyeonggi-do."))
+    MessageBubble(chatMessage: ChatMessage(sender: .user, message: "Why was Hwaseong Fortress built by King Jeongjo?"))
+    MessageBubble(chatMessage: ChatMessage(sender: .chatBot, message: "Suwon Hwaseong Fortress was built in the late 18th century by King Jeongjo to honor his father, Crown Prince Sado, and to strengthen his own royal power. It stands as a masterpiece of Joseon-era military architecture, incorporating the most advanced scientific technologies of its time."))
     MessageBubble(chatMessage: ChatMessage(sender: .user, message: "Hello,This is a place where you can feel the charm of Gyeonggi-do."))
 }
