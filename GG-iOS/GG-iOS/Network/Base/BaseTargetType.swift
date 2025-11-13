@@ -14,14 +14,14 @@ protocol BaseTargetType: TargetType { }
 extension BaseTargetType {
     var baseURL: URL {
         guard let url = URL(string: "\(AppEnvironment.baseURL)") else {
-            fatalError("Error: BaseURL을 찾을 수 없습니다.")
+            fatalError("BaseURL을 찾을 수 없습니다.")
         }
         
         return url
     }
     
     var headers: [String: String]? {
-        var header = ["Content-Type": "application/json"]
+        let header = ["Content-Type": "application/json"]
         return header
     }
 }

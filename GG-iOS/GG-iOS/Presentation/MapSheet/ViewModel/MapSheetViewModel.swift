@@ -8,34 +8,47 @@
 import MapKit
 import SwiftUI
 
+@MainActor
 final class MapSheetViewModel: ObservableObject {
     
     // MARK: - Properties
     
+    @Published var isLoading: Bool = false
+    @Published var shouldShowErrorAlert: Bool = false
+    
     @Published var cameraPosition: MapCameraPosition
     @Published var sheetState: SheetState = .list
-    @Published var mapPlaces: [MapPlace] = MapPlace.mockData
+    @Published var mapPlaces: [MapPlace] = []
     @Published var bottomSheetHeight: CGFloat = SheetState.defaultHeight
     
-    // 임시 카메라 위치
-    // TODO: - 바텀시트 내려감에 따라 지도 중심점 조정 필요
+    private let placeListService: PlaceListAPI
+    
     private let initialLocation = CLLocationCoordinate2D(latitude: 37.5598, longitude: 126.9770)
     private let span = MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
     private let spanRate: Double = 0.45
     
+    var alertErrorMessage: String = ""
+    
     // MARK: - Action
     
     enum Action {
+    
+        case setCameraToUser
         case showMap
         case showList
         case selectMarker(_ mapPlace: MapPlace)
         case selectPlace(_ mapPlace: MapPlace)
         case switchSheetState(_ sheetState: SheetState)
+        
+        // api
+        case fetchPlaceList
     }
     
     // MARK: - Initializer
     
-    init() {
+    init(placeListService: PlaceListAPI) {
+        self.placeListService = placeListService
+        
         let adjustedCenter = CLLocationCoordinate2D(
             latitude: initialLocation.latitude - (span.latitudeDelta * spanRate),
             longitude: initialLocation.longitude
@@ -48,6 +61,13 @@ final class MapSheetViewModel: ObservableObject {
     
     func dispatch(_ action: Action) {
         switch action {
+        case .setCameraToUser:
+            if bottomSheetHeight == SheetState.minimumHeight {
+                setCameraPosition(coordinate: initialLocation, spanRate: 0.0)
+            } else {
+                setCameraPosition(coordinate: initialLocation, spanRate: spanRate)
+            }
+            
         case .showMap:
             bottomSheetHeight = SheetState.minimumHeight
             
@@ -56,7 +76,7 @@ final class MapSheetViewModel: ObservableObject {
             
         case .selectMarker(let mapPlace):
             selectMarker(mapPlace)
-            setCameraPosition(coordinate: mapPlace.coordinate)
+            setCameraPosition(coordinate: mapPlace.coordinate, spanRate: spanRate)
             sheetState = .detail
             
             withAnimation(.easeInOut(duration: 0.3)) {
@@ -65,7 +85,7 @@ final class MapSheetViewModel: ObservableObject {
             
         case .selectPlace(let mapPlace):
             selectMarker(mapPlace)
-            setCameraPosition(coordinate: mapPlace.coordinate)
+            setCameraPosition(coordinate: mapPlace.coordinate, spanRate: spanRate)
             sheetState = .detail
             
         case .switchSheetState(let sheetState):
@@ -76,6 +96,16 @@ final class MapSheetViewModel: ObservableObject {
             case .detail:
                 deSelectMarker()
                 self.sheetState = .list
+            }
+            
+        case .fetchPlaceList:
+            Task {
+                await fetchPlaceList(
+                    request: PlaceListRequestDTO(
+                        x: initialLocation.longitude,
+                        y: initialLocation.latitude
+                    )
+                )
             }
         }
     }
@@ -101,7 +131,7 @@ private extension MapSheetViewModel {
     }
     
     /// 카메라 위치를 변경합니다.
-    func setCameraPosition(coordinate: CLLocationCoordinate2D) {
+    func setCameraPosition(coordinate: CLLocationCoordinate2D, spanRate: Double) {
         withAnimation(.easeInOut(duration: 0.8)) {
             let adjustedCenter = CLLocationCoordinate2D(
                 latitude: coordinate.latitude - (span.latitudeDelta * spanRate),
@@ -118,6 +148,37 @@ private extension MapSheetViewModel {
 extension MapSheetViewModel {
     func isBottomSheetMinimumHeight() -> Bool {
         return bottomSheetHeight == SheetState.minimumHeight
+    }
+}
+
+// MARK: - API
+
+private extension MapSheetViewModel {
+    func fetchPlaceList(request: PlaceListRequestDTO) async {
+        self.isLoading = true
+        
+        do {
+            let response = try await placeListService.fetchPlaceList(request: request)
+            
+            guard let data = response.data else {
+                self.alertErrorMessage = NetworkError.responseError.alertMessage
+                self.shouldShowErrorAlert =  true
+                return
+            }
+            
+            self.alertErrorMessage = ""
+            self.isLoading = false
+            self.shouldShowErrorAlert =  false
+            self.mapPlaces = data.placeList.map { MapPlace(from: $0) }
+            
+        } catch let error as NetworkError {
+            self.alertErrorMessage = error.alertMessage
+            self.shouldShowErrorAlert =  true
+            
+        } catch {
+            self.alertErrorMessage = NetworkError.unknownError.alertMessage
+            self.shouldShowErrorAlert =  true
+        }
     }
 }
 

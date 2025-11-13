@@ -16,6 +16,7 @@ struct PlaceListRow: View {
     private let title: String
     private let address: String
     private let imageUrlStrings: [String]
+    private let isLoading: Bool
     private var onTap: (() -> Void)?
     
     // MARK: - Initializer
@@ -24,11 +25,13 @@ struct PlaceListRow: View {
         title: String,
         address: String,
         imageUrlStrings: [String],
+        isLoading: Bool,
         onTap: (() -> Void)? = nil
     ) {
         self.title = title
         self.address = address
         self.imageUrlStrings = imageUrlStrings
+        self.isLoading = isLoading
         self.onTap = onTap
     }
     
@@ -49,6 +52,7 @@ struct PlaceListRow: View {
             }
         }
         .buttonStyle(.plain)
+        .disabled(isLoading)
     }
 }
 
@@ -59,6 +63,11 @@ extension PlaceListRow {
         Text(title)
             .applyGGFont(.heading02)
             .foregroundStyle(.textNatural)
+            .customSkeleton(
+                with: isLoading,
+                size: CGSize(width: 148.adjustedWidth, height: 21.adjustedHeight),
+                radius: 5
+            )
     }
     
     private var addressSection: some View {
@@ -76,6 +85,12 @@ extension PlaceListRow {
                 .lineLimit(1)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
+        .customSkeleton(
+            with: isLoading,
+            size: CGSize(width: 280.adjustedWidth, height: 14.adjustedHeight),
+            radius: 5
+        )
+        
     }
     
     private var photos: some View {
@@ -84,6 +99,7 @@ extension PlaceListRow {
                 KFImage(URL(string: imageString))
                     .resizable()
                     .aspectRatio(contentMode: .fill)
+                    .customSkeleton(with: isLoading)
                     .frame(height: 80.adjustedHeight)
                     .background(.gray300)
                     .cornerRadius(10, corners: .allCorners)
@@ -96,6 +112,16 @@ extension PlaceListRow {
     PlaceListRow(
         title: "Suwon Hwaseong",
         address: "320-2 Hwajeong-dong, Jangan-gu, Suwon-si",
-        imageUrlStrings: TempImageUrlString.threeImageUrlStrings()
+        imageUrlStrings: TempImageUrlString.threeImageUrlStrings(),
+        isLoading: false
     )
+    .padding(.horizontal, 20.adjustedWidth)
+    
+    PlaceListRow(
+        title: "Suwon Hwaseong",
+        address: "320-2 Hwajeong-dong, Jangan-gu, Suwon-si",
+        imageUrlStrings: TempImageUrlString.threeImageUrlStrings(),
+        isLoading: true
+    )
+    .padding(.horizontal, 20.adjustedWidth)
 }

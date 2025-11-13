@@ -154,7 +154,3 @@ extension PlaceDetailView {
             .foregroundStyle(.clear)
     }
 }
-
-#Preview {
-    PlaceDetailView(viewModel: MapSheetViewModel())
-}

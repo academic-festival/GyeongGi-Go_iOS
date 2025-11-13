@@ -10,6 +10,7 @@
 		E39002372E8D3BFA00D6DA57 /* CombineMoya in Frameworks */ = {isa = PBXBuildFile; productRef = E39002362E8D3BFA00D6DA57 /* CombineMoya */; };
 		E39002392E8D3BFA00D6DA57 /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = E39002382E8D3BFA00D6DA57 /* Moya */; };
 		E390023C2E8D3C1B00D6DA57 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = E390023B2E8D3C1B00D6DA57 /* Kingfisher */; };
+		E3AB47592EC5BF5900912D35 /* SkeletonUI in Frameworks */ = {isa = PBXBuildFile; productRef = E3AB47582EC5BF5900912D35 /* SkeletonUI */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,6 +44,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E390023C2E8D3C1B00D6DA57 /* Kingfisher in Frameworks */,
+				E3AB47592EC5BF5900912D35 /* SkeletonUI in Frameworks */,
 				E39002392E8D3BFA00D6DA57 /* Moya in Frameworks */,
 				E39002372E8D3BFA00D6DA57 /* CombineMoya in Frameworks */,
 			);
@@ -90,6 +92,7 @@
 				E39002362E8D3BFA00D6DA57 /* CombineMoya */,
 				E39002382E8D3BFA00D6DA57 /* Moya */,
 				E390023B2E8D3C1B00D6DA57 /* Kingfisher */,
+				E3AB47582EC5BF5900912D35 /* SkeletonUI */,
 			);
 			productName = "GG-iOS";
 			productReference = E390FF782E8D37CD00D6DA57 /* GG-iOS.app */;
@@ -122,6 +125,7 @@
 			packageReferences = (
 				E39002352E8D3BFA00D6DA57 /* XCRemoteSwiftPackageReference "Moya" */,
 				E390023A2E8D3C1B00D6DA57 /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				E3AB47572EC5BF5900912D35 /* XCRemoteSwiftPackageReference "SkeletonUI" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = E390FF792E8D37CD00D6DA57 /* Products */;
@@ -156,6 +160,8 @@
 /* Begin XCBuildConfiguration section */
 		E390FF812E8D37CE00D6DA57 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = E390FF7A2E8D37CD00D6DA57 /* GG-iOS */;
+			baseConfigurationReferenceRelativePath = Global/Config.xcconfig;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -220,6 +226,8 @@
 		};
 		E390FF822E8D37CE00D6DA57 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = E390FF7A2E8D37CD00D6DA57 /* GG-iOS */;
+			baseConfigurationReferenceRelativePath = Global/Config.xcconfig;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -277,6 +285,8 @@
 		};
 		E390FF842E8D37CE00D6DA57 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = E390FF7A2E8D37CD00D6DA57 /* GG-iOS */;
+			baseConfigurationReferenceRelativePath = Global/Config.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -307,6 +317,8 @@
 		};
 		E390FF852E8D37CE00D6DA57 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = E390FF7A2E8D37CD00D6DA57 /* GG-iOS */;
+			baseConfigurationReferenceRelativePath = Global/Config.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -375,6 +387,14 @@
 				minimumVersion = 8.5.0;
 			};
 		};
+		E3AB47572EC5BF5900912D35 /* XCRemoteSwiftPackageReference "SkeletonUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/CSolanaM/SkeletonUI";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.2;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -392,6 +412,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E390023A2E8D3C1B00D6DA57 /* XCRemoteSwiftPackageReference "Kingfisher" */;
 			productName = Kingfisher;
+		};
+		E3AB47582EC5BF5900912D35 /* SkeletonUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E3AB47572EC5BF5900912D35 /* XCRemoteSwiftPackageReference "SkeletonUI" */;
+			productName = SkeletonUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

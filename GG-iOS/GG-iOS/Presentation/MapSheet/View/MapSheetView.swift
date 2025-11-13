@@ -13,7 +13,9 @@ struct MapSheetView: View {
     // MARK: - Properties
     
     @EnvironmentObject private var appCoordinator: AppCoordinator
-    @StateObject private var viewModel = MapSheetViewModel()
+    @StateObject private var viewModel = MapSheetViewModel(
+        placeListService: PlaceListService()
+    )
     
     // MARK: - Body
     
@@ -32,6 +34,15 @@ struct MapSheetView: View {
             
             address
         }
+        .alert(isPresented: $viewModel.shouldShowErrorAlert) {
+            Alert(
+                title: Text(viewModel.alertErrorMessage),
+                message: nil,
+                dismissButton: .default(Text("retry")) {
+                    viewModel.dispatch(.fetchPlaceList)
+                }
+            )
+        }
     }
 }
 
@@ -40,8 +51,8 @@ struct MapSheetView: View {
 extension MapSheetView {
     private var map: some View {
         Map(position: $viewModel.cameraPosition) {
-            ForEach($viewModel.mapPlaces) { $mapPlace in
-                Annotation(mapPlace.name, coordinate: mapPlace.coordinate) {
+            ForEach($viewModel.mapPlaces, id: \.id) { $mapPlace in
+                Annotation(mapPlace.placeName, coordinate: mapPlace.coordinate) {
                     GGMarker(isSelected: mapPlace.isSelected) {
                         viewModel.dispatch(.selectMarker(mapPlace))
                     }
@@ -71,53 +82,71 @@ extension MapSheetView {
     }
     
     private var topContent: some View {
-        Button {
-            switch viewModel.sheetState {
-            case .list:
-                withAnimation(.easeInOut(duration: 0.3)) {
-                    if viewModel.isBottomSheetMinimumHeight() {
-                        viewModel.dispatch(.showList)
-                    } else {
-                        viewModel.dispatch(.showMap)
-                    }
-                }
-            case .detail:
-                
-                if viewModel.isBottomSheetMinimumHeight() {
+        ZStack(alignment: .center) {
+            Button {
+                switch viewModel.sheetState {
+                case .list:
                     withAnimation(.easeInOut(duration: 0.3)) {
-                        viewModel.dispatch(.showList)
+                        if viewModel.isBottomSheetMinimumHeight() {
+                            viewModel.dispatch(.showList)
+                        } else {
+                            viewModel.dispatch(.showMap)
+                        }
                     }
-                } else {
-                    viewModel.dispatch(.switchSheetState(.detail))
+                case .detail:
+                    
+                    if viewModel.isBottomSheetMinimumHeight() {
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            viewModel.dispatch(.showList)
+                        }
+                    } else {
+                        viewModel.dispatch(.switchSheetState(.detail))
+                    }
                 }
+            } label: {
+                HStack(alignment: .center, spacing: 8.adjustedWidth) {
+                    Image(
+                        viewModel.isBottomSheetMinimumHeight()
+                        ? .showListIcon : viewModel.sheetState == .list
+                        ? .showMapIcon : .showListIcon
+                    )
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 16.adjusted, height: 16.adjusted)
+                    
+                    Text(
+                        viewModel.isBottomSheetMinimumHeight()
+                        ? "Show list" : viewModel.sheetState == .list
+                        ? "Show map" : "Show list"
+                    )
+                    .applyGGFont(.body02)
+                    .foregroundStyle(.textNatural)
+                }
+                .padding(.horizontal, 16.adjustedWidth)
+                .padding(.vertical, 8.adjustedHeight)
+                .background(.gray0)
+                .capsuleClipped()
+                .addBorder(.capsule, borderColor: .gray200, borderWidth: 1)
+                .animation(.easeInOut(duration: 0.1), value: viewModel.sheetState)
             }
-        } label: {
-            HStack(alignment: .center, spacing: 8.adjustedWidth) {
-                Image(
-                    viewModel.isBottomSheetMinimumHeight()
-                    ? .showListIcon : viewModel.sheetState == .list
-                    ? .showMapIcon : .showListIcon
-                )
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 16.adjusted, height: 16.adjusted)
-                
-                Text(
-                    viewModel.isBottomSheetMinimumHeight()
-                    ? "Show list" : viewModel.sheetState == .list
-                    ? "Show map" : "Show list"
-                )
-                .applyGGFont(.body02)
-                .foregroundStyle(.textNatural)
+            .buttonStyle(.plain)
+            
+            HStack(alignment: .center, spacing: 0) {
+                Button {
+                    viewModel.dispatch(.setCameraToUser)
+                } label: {
+                    Image(.locationSetIcon)
+                        .resizable()
+                        .renderingMode(.original)
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 28.adjusted, height: 28.adjusted)
+                }
+                .buttonStyle(.plain)
             }
-            .padding(.horizontal, 16.adjustedWidth)
-            .padding(.vertical, 8.adjustedHeight)
-            .background(.gray0)
-            .capsuleClipped()
-            .addBorder(.capsule, borderColor: .gray200, borderWidth: 1)
-            .animation(.easeInOut(duration: 0.1), value: viewModel.sheetState)
+            .frame(maxWidth: .infinity, alignment: .trailing)
+            .padding(.top, 2.adjustedHeight)
+            .padding(.trailing, 20.adjustedWidth)
         }
-        .buttonStyle(.plain)
     }
     
     private var sheetContent: some View {
