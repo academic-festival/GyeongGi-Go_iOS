@@ -65,3 +65,40 @@ extension MapPlace {
         ]
     }
 }
+
+extension MapPlace {
+    static var skeletonData: [MapPlace] {
+        [
+            MapPlace(
+                placeId: 1,
+                placeName: "",
+                address: "",
+                imageUrlStrings: ["1", "2", "3"],
+                coordinate: CLLocationCoordinate2D(
+                    latitude: 0,
+                    longitude: 0
+                )
+            ),
+            MapPlace(
+                placeId: 2,
+                placeName: "",
+                address: "",
+                imageUrlStrings: ["4", "5", "6"],
+                coordinate: CLLocationCoordinate2D(
+                    latitude: 0,
+                    longitude: 0
+                )
+            ),
+            MapPlace(
+                placeId: 3,
+                placeName: "",
+                address: "",
+                imageUrlStrings: ["7", "8", "9"],
+                coordinate: CLLocationCoordinate2D(
+                    latitude: 0,
+                    longitude: 0
+                )
+            )
+        ]
+    }
+}
