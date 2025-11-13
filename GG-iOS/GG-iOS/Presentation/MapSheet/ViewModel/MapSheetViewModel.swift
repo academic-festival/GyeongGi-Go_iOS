@@ -32,6 +32,8 @@ final class MapSheetViewModel: ObservableObject {
     // MARK: - Action
     
     enum Action {
+    
+        case setCameraToUser
         case showMap
         case showList
         case selectMarker(_ mapPlace: MapPlace)
@@ -59,6 +61,13 @@ final class MapSheetViewModel: ObservableObject {
     
     func dispatch(_ action: Action) {
         switch action {
+        case .setCameraToUser:
+            if bottomSheetHeight == SheetState.minimumHeight {
+                setCameraPosition(coordinate: initialLocation, spanRate: 0.0)
+            } else {
+                setCameraPosition(coordinate: initialLocation, spanRate: spanRate)
+            }
+            
         case .showMap:
             bottomSheetHeight = SheetState.minimumHeight
             
@@ -67,7 +76,7 @@ final class MapSheetViewModel: ObservableObject {
             
         case .selectMarker(let mapPlace):
             selectMarker(mapPlace)
-            setCameraPosition(coordinate: mapPlace.coordinate)
+            setCameraPosition(coordinate: mapPlace.coordinate, spanRate: spanRate)
             sheetState = .detail
             
             withAnimation(.easeInOut(duration: 0.3)) {
@@ -76,7 +85,7 @@ final class MapSheetViewModel: ObservableObject {
             
         case .selectPlace(let mapPlace):
             selectMarker(mapPlace)
-            setCameraPosition(coordinate: mapPlace.coordinate)
+            setCameraPosition(coordinate: mapPlace.coordinate, spanRate: spanRate)
             sheetState = .detail
             
         case .switchSheetState(let sheetState):
@@ -122,7 +131,7 @@ private extension MapSheetViewModel {
     }
     
     /// 카메라 위치를 변경합니다.
-    func setCameraPosition(coordinate: CLLocationCoordinate2D) {
+    func setCameraPosition(coordinate: CLLocationCoordinate2D, spanRate: Double) {
         withAnimation(.easeInOut(duration: 0.8)) {
             let adjustedCenter = CLLocationCoordinate2D(
                 latitude: coordinate.latitude - (span.latitudeDelta * spanRate),
