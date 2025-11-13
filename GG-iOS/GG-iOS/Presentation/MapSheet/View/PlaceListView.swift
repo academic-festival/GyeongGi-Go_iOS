@@ -45,12 +45,12 @@ extension PlaceListView {
     
     private var placeList: some View {
         VStack(alignment: .center, spacing: 20.adjustedHeight) {
-            ForEach(viewModel.isLoading ? MapPlace.skeletonData : viewModel.mapPlaces, id: \.id) { mapPlace in
+            ForEach(viewModel.isPlaceListLoading ? MapPlace.skeletonData : viewModel.mapPlaces, id: \.id) { mapPlace in
                 PlaceListRow(
                     title: mapPlace.placeName,
                     address: mapPlace.address,
                     imageUrlStrings: mapPlace.imageUrlStrings,
-                    isLoading: viewModel.isLoading,
+                    isLoading: viewModel.isPlaceListLoading,
                     onTap: {
                         viewModel.dispatch(.selectPlace(mapPlace))
                     }

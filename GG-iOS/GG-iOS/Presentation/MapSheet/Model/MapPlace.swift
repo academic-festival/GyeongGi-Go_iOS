@@ -33,7 +33,7 @@ extension MapPlace {
     static var mockData: [MapPlace] {
         [
             MapPlace(
-                placeId: 1,
+                placeId: 153,
                 placeName: "Seoul Station",
                 address: "175, Mallijae-ro, Jung-gu, Seoul, Republic of Korea",
                 imageUrlStrings: TempImageUrlString.threeImageUrlStrings(),

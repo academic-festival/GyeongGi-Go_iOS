@@ -13,13 +13,15 @@ final class MapSheetViewModel: ObservableObject {
     
     // MARK: - Properties
     
-    @Published var isLoading: Bool = false
+    @Published var isPlaceListLoading: Bool = false
+    @Published var isPlaceDetailLoading: Bool = true
     @Published var shouldShowErrorAlert: Bool = false
     
     @Published var cameraPosition: MapCameraPosition
-    @Published var sheetState: SheetState = .list
-    @Published var mapPlaces: [MapPlace] = []
+    @Published var sheetState: SheetState = .detail
     @Published var bottomSheetHeight: CGFloat = SheetState.defaultHeight
+    @Published var mapPlaces: [MapPlace] = MapPlace.mockData // PlaceListAPI 고쳐지면 다시 빈배열
+    @Published var placeDetail: PlaceDetail = PlaceDetail.skeletonData
     
     private let placeListService: PlaceListAPI
     
@@ -155,7 +157,7 @@ extension MapSheetViewModel {
 
 private extension MapSheetViewModel {
     func fetchPlaceList(request: PlaceListRequestDTO) async {
-        self.isLoading = true
+        self.isPlaceListLoading = true
         
         do {
             let response = try await placeListService.fetchPlaceList(request: request)
@@ -167,7 +169,7 @@ private extension MapSheetViewModel {
             }
             
             self.alertErrorMessage = ""
-            self.isLoading = false
+            self.isPlaceListLoading = false
             self.shouldShowErrorAlert =  false
             self.mapPlaces = data.placeList.map { MapPlace(from: $0) }
             

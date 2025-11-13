@@ -13,11 +13,13 @@ struct CustomSkeletonModifier: ViewModifier {
     private let isLoading: Bool
     private let size: CGSize?
     private let radius: CGFloat
+    private let lines: Int
     
-    init(isLoading: Bool, size: CGSize?, radius: CGFloat) {
+    init(isLoading: Bool, size: CGSize?, radius: CGFloat, lines: Int) {
         self.isLoading = isLoading
         self.size = size
         self.radius = radius
+        self.lines = lines
     }
     
     func body(content: Content) -> some View {
@@ -25,7 +27,8 @@ struct CustomSkeletonModifier: ViewModifier {
             .skeleton(
                 with: isLoading,
                 size: size,
-                shape: .rounded(.radius(radius))
+                shape: .rounded(.radius(radius)),
+                lines: lines
             )
     }
 }
@@ -34,13 +37,15 @@ extension View {
     func customSkeleton(
         with isLoading: Bool,
         size: CGSize? = nil,
-        radius: CGFloat = 10
+        radius: CGFloat = 10,
+        lines: Int = 1
     ) -> some View {
         self.modifier(
             CustomSkeletonModifier(
                 isLoading: isLoading,
                 size: size,
-                radius: radius
+                radius: radius,
+                lines: lines
             )
         )
     }

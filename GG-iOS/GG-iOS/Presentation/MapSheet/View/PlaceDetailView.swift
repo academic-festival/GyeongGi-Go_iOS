@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+import Kingfisher
+
 struct PlaceDetailView: View {
     
     // MARK: - Properties
@@ -54,6 +56,7 @@ extension PlaceDetailView {
         .padding(.horizontal, 20.adjustedWidth)
         .padding(.top, 20.adjustedHeight)
         .frame(maxWidth: .infinity, alignment: .leading)
+        .disabled(viewModel.isPlaceDetailLoading)
     }
     
     private var details: some View {
@@ -68,38 +71,46 @@ extension PlaceDetailView {
     }
     
     private var title: some View {
-        Text("Suwon Hwaseong")
+        Text(viewModel.placeDetail.placeName)
             .applyGGFont(.title02)
             .foregroundStyle(.textNatural)
-            .frame(maxWidth: .infinity, alignment: .leading)
             .lineLimit(1)
+            .customSkeleton(
+                with: viewModel.isPlaceDetailLoading,
+                size: CGSize(width: 250.adjustedWidth, height: 31.adjustedHeight),
+                radius: 8
+            )
+            .frame(maxWidth: .infinity, alignment: .leading)
     }
     
     private var photos: some View {
         HStack(alignment: .center, spacing: 8.adjustedWidth) {
-            Image(.temp)
+            KFImage(URL(string: viewModel.placeDetail.imageUrlStrings[0]))
                 .resizable()
                 .aspectRatio(contentMode: .fill)
+                .customSkeleton(with: viewModel.isPlaceDetailLoading)
+                .frame(width: 218.adjustedWidth, height: 168.adjustedHeight)
                 .background(.gray300)
-                .frame(width: 218.adjustedWidth)
                 .cornerRadius(10, corners: .allCorners)
             
             VStack(alignment: .center, spacing: 8.adjustedHeight) {
-                Image(.temp)
+                KFImage(URL(string: viewModel.placeDetail.imageUrlStrings[1]))
                     .resizable()
                     .aspectRatio(contentMode: .fill)
+                    .customSkeleton(with: viewModel.isPlaceDetailLoading)
+                    .frame(width: 110.adjustedWidth, height: 80.adjustedHeight)
                     .background(.gray300)
                     .cornerRadius(10, corners: .allCorners)
                 
-                Image(.temp)
+                KFImage(URL(string: viewModel.placeDetail.imageUrlStrings[2]))
                     .resizable()
                     .aspectRatio(contentMode: .fill)
+                    .customSkeleton(with: viewModel.isPlaceDetailLoading)
+                    .frame(width: 110.adjustedWidth, height: 80.adjustedHeight)
                     .background(.gray300)
                     .cornerRadius(10, corners: .allCorners)
             }
         }
-        .frame(maxWidth: .infinity)
-        .frame(height: 168.adjustedHeight)
     }
     
     private var informations: some View {
@@ -107,23 +118,40 @@ extension PlaceDetailView {
             InformationWithIconRow(
                 InformationWithIcon(
                     informationType: .address,
-                    text: "320-2 Hwajeong-dong, Jangan-gu, Suwon-si"
+                    text: viewModel.placeDetail.address
                 )
+            )
+            .customSkeleton(
+                with: viewModel.isPlaceDetailLoading,
+                size: CGSize(width: 335.adjustedWidth, height: 16.adjustedHeight),
+                radius: 5
             )
             
             InformationWithIconRow(
                 InformationWithIcon(
                     informationType: .url,
-                    text: "www.nye020308.co.kr"
+                    text: viewModel.placeDetail.inquiry
                 )
+            )
+            .customSkeleton(
+                with: viewModel.isPlaceDetailLoading,
+                size: CGSize(width: 335.adjustedWidth, height: 16.adjustedHeight),
+                radius: 5
             )
             
-            InformationWithIconRow(
-                InformationWithIcon(
-                    informationType: .price,
-                    text: "Infant : free\nChildren : 3000\nAdult : 7000"
+            if let price = viewModel.placeDetail.price {
+                InformationWithIconRow(
+                    InformationWithIcon(
+                        informationType: .price,
+                        text: price
+                    )
                 )
-            )
+                .customSkeleton(
+                    with: viewModel.isPlaceDetailLoading,
+                    size: CGSize(width: 335.adjustedWidth, height: 16.adjustedHeight),
+                    radius: 5
+                )
+            }
         }
     }
     
@@ -140,10 +168,16 @@ extension PlaceDetailView {
                 .applyGGFont(.heading02)
                 .foregroundStyle(.textNatural)
             
-            Text("The name was changed to Suwon Dohobu (護府) in the 17th year of King Jeongjo's reign (1793). It also refers to the fortress built here. In 1789, King Jeongjo moved the 園 of Crown Prince Jangheon (莊獻), his birth The name was changed to Suwon Dohobu (護府) in the 17th year of King Jeongjo's reign (1793). It also refers to the fortress built here. In 1789, King Jeongjo moved the 園 of Crown Prince Jangheon (莊獻), his birth,")
+            Text(viewModel.placeDetail.description)
                 .applyGGFont(.body02)
                 .foregroundStyle(.textNormal)
                 .frame(width: 335.adjustedWidth, alignment: .leading)
+                .customSkeleton(
+                    with: viewModel.isPlaceDetailLoading,
+                    size: CGSize(width: 335.adjustedWidth, height: 55.adjustedHeight),
+                    radius: 4,
+                    lines: 3
+                )
         }
     }
     
