@@ -20,7 +20,8 @@ final class MapSheetViewModel: ObservableObject {
     @Published var cameraPosition: MapCameraPosition
     @Published var sheetState: SheetState = .list
     @Published var bottomSheetHeight: CGFloat = SheetState.defaultHeight
-    @Published var mapPlaces: [MapPlace] = MapPlace.mockData // PlaceListAPI 고쳐지면 다시 빈배열
+    // TODO: - HomeAPI 수정되면 다시 빈배열로
+    @Published var mapPlaces: [MapPlace] = MapPlace.mockData
     @Published var placeDetail: PlaceDetail = PlaceDetail.skeletonData
     
     private let placeListService: PlaceListAPI
@@ -81,12 +82,12 @@ final class MapSheetViewModel: ObservableObject {
             fetchPlaceDetailTask?.cancel()
             fetchPlaceDetailTask = nil
             
-            placeDetail = PlaceDetail.skeletonData
             bottomSheetHeight = SheetState.defaultHeight
             
         case .selectMarker(let mapPlace):
             fetchPlaceDetailTask?.cancel()
             fetchPlaceDetailTask = Task {
+                // TODO: - 임시 placeId
                 await fetchPlaceDetail(placeId: 153)
             }
             
@@ -101,6 +102,7 @@ final class MapSheetViewModel: ObservableObject {
         case .selectPlace(let mapPlace):
             fetchPlaceDetailTask?.cancel()
             fetchPlaceDetailTask = Task {
+                // TODO: - 임시 placeId
                 await fetchPlaceDetail(placeId: 153)
             }
             
@@ -118,6 +120,7 @@ final class MapSheetViewModel: ObservableObject {
                 fetchPlaceDetailTask = nil
                 
                 deSelectMarker()
+                placeDetail = PlaceDetail.skeletonData
                 self.sheetState = .list
             }
             
@@ -219,13 +222,16 @@ private extension MapSheetViewModel {
                 return
             }
             
+            try Task.checkCancellation()
+            
             self.alertErrorMessage = ""
             self.isPlaceDetailLoading = false
             self.shouldShowErrorAlert = false
             self.placeDetail = PlaceDetail(from: data)
             
         } catch is CancellationError {
-            self.isPlaceDetailLoading = false
+            self.isPlaceDetailLoading = true
+            self.placeDetail = PlaceDetail.skeletonData
             
         } catch let error as NetworkError {
             self.alertErrorMessage = error.alertMessage
