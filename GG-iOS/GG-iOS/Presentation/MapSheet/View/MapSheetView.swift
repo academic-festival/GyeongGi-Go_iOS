@@ -14,7 +14,8 @@ struct MapSheetView: View {
     
     @EnvironmentObject private var appCoordinator: AppCoordinator
     @StateObject private var viewModel = MapSheetViewModel(
-        placeListService: PlaceListService()
+        placeListService: PlaceListService(),
+        placeDetailService: PlaceDetailService()
     )
     
     // MARK: - Body

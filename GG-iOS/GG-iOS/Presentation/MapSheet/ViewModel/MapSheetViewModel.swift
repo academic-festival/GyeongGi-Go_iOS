@@ -14,16 +14,19 @@ final class MapSheetViewModel: ObservableObject {
     // MARK: - Properties
     
     @Published var isPlaceListLoading: Bool = false
-    @Published var isPlaceDetailLoading: Bool = true
+    @Published var isPlaceDetailLoading: Bool = false
     @Published var shouldShowErrorAlert: Bool = false
     
     @Published var cameraPosition: MapCameraPosition
-    @Published var sheetState: SheetState = .detail
+    @Published var sheetState: SheetState = .list
     @Published var bottomSheetHeight: CGFloat = SheetState.defaultHeight
     @Published var mapPlaces: [MapPlace] = MapPlace.mockData // PlaceListAPI 고쳐지면 다시 빈배열
     @Published var placeDetail: PlaceDetail = PlaceDetail.skeletonData
     
     private let placeListService: PlaceListAPI
+    private let placeDetailService: PlaceDetailAPI
+    
+    private var fetchPlaceDetailTask: Task<Void, Never>?
     
     private let initialLocation = CLLocationCoordinate2D(latitude: 37.5598, longitude: 126.9770)
     private let span = MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
@@ -48,8 +51,9 @@ final class MapSheetViewModel: ObservableObject {
     
     // MARK: - Initializer
     
-    init(placeListService: PlaceListAPI) {
+    init(placeListService: PlaceListAPI, placeDetailService: PlaceDetailAPI) {
         self.placeListService = placeListService
+        self.placeDetailService = placeDetailService
         
         let adjustedCenter = CLLocationCoordinate2D(
             latitude: initialLocation.latitude - (span.latitudeDelta * spanRate),
@@ -74,9 +78,18 @@ final class MapSheetViewModel: ObservableObject {
             bottomSheetHeight = SheetState.minimumHeight
             
         case .showList:
+            fetchPlaceDetailTask?.cancel()
+            fetchPlaceDetailTask = nil
+            
+            placeDetail = PlaceDetail.skeletonData
             bottomSheetHeight = SheetState.defaultHeight
             
         case .selectMarker(let mapPlace):
+            fetchPlaceDetailTask?.cancel()
+            fetchPlaceDetailTask = Task {
+                await fetchPlaceDetail(placeId: 153)
+            }
+            
             selectMarker(mapPlace)
             setCameraPosition(coordinate: mapPlace.coordinate, spanRate: spanRate)
             sheetState = .detail
@@ -86,6 +99,11 @@ final class MapSheetViewModel: ObservableObject {
             }
             
         case .selectPlace(let mapPlace):
+            fetchPlaceDetailTask?.cancel()
+            fetchPlaceDetailTask = Task {
+                await fetchPlaceDetail(placeId: 153)
+            }
+            
             selectMarker(mapPlace)
             setCameraPosition(coordinate: mapPlace.coordinate, spanRate: spanRate)
             sheetState = .detail
@@ -96,6 +114,9 @@ final class MapSheetViewModel: ObservableObject {
                 break
                 
             case .detail:
+                fetchPlaceDetailTask?.cancel()
+                fetchPlaceDetailTask = nil
+                
                 deSelectMarker()
                 self.sheetState = .list
             }
@@ -170,16 +191,50 @@ private extension MapSheetViewModel {
             
             self.alertErrorMessage = ""
             self.isPlaceListLoading = false
-            self.shouldShowErrorAlert =  false
+            self.shouldShowErrorAlert = false
             self.mapPlaces = data.placeList.map { MapPlace(from: $0) }
             
         } catch let error as NetworkError {
             self.alertErrorMessage = error.alertMessage
-            self.shouldShowErrorAlert =  true
+            self.shouldShowErrorAlert = true
+            print(error)
             
         } catch {
             self.alertErrorMessage = NetworkError.unknownError.alertMessage
-            self.shouldShowErrorAlert =  true
+            self.shouldShowErrorAlert = true
+        }
+    }
+    
+    func fetchPlaceDetail(placeId: Int) async {
+        self.isPlaceDetailLoading = true
+        
+        do {
+            let response = try await placeDetailService.fetchPlaceDetail(placeId: placeId)
+            
+            try Task.checkCancellation()
+            
+            guard let data = response.data else {
+                self.alertErrorMessage = NetworkError.responseError.alertMessage
+                self.shouldShowErrorAlert = true
+                return
+            }
+            
+            self.alertErrorMessage = ""
+            self.isPlaceDetailLoading = false
+            self.shouldShowErrorAlert = false
+            self.placeDetail = PlaceDetail(from: data)
+            
+        } catch is CancellationError {
+            self.isPlaceDetailLoading = false
+            
+        } catch let error as NetworkError {
+            self.alertErrorMessage = error.alertMessage
+            self.shouldShowErrorAlert = true
+            print(error)
+            
+        } catch {
+            self.alertErrorMessage = NetworkError.unknownError.alertMessage
+            self.shouldShowErrorAlert = true
         }
     }
 }

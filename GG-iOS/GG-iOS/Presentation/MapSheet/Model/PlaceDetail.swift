@@ -17,6 +17,17 @@ struct PlaceDetail {
 }
 
 extension PlaceDetail {
+    init(from dto: PlaceDetailResponseDTO) {
+        self.placeName = dto.placeName
+        self.imageUrlStrings = dto.placeImages
+        self.address = dto.address
+        self.inquiry = dto.inquiry
+        self.price = dto.price
+        self.description = dto.locationExplain
+    }
+}
+
+extension PlaceDetail {
     static var mockData: PlaceDetail {
         return PlaceDetail(
             placeName: "Suwon Hwaseong1",

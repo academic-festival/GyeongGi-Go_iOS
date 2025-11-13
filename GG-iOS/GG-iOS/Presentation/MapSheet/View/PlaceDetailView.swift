@@ -43,6 +43,7 @@ struct PlaceDetailView: View {
                 scrollSpacer
             }
         }
+        .disabled(viewModel.isPlaceDetailLoading)
     }
 }
 
@@ -56,7 +57,6 @@ extension PlaceDetailView {
         .padding(.horizontal, 20.adjustedWidth)
         .padding(.top, 20.adjustedHeight)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .disabled(viewModel.isPlaceDetailLoading)
     }
     
     private var details: some View {
@@ -77,7 +77,7 @@ extension PlaceDetailView {
             .lineLimit(1)
             .customSkeleton(
                 with: viewModel.isPlaceDetailLoading,
-                size: CGSize(width: 250.adjustedWidth, height: 31.adjustedHeight),
+                size: CGSize(width: 250.adjustedWidth, height: 33.adjustedHeight),
                 radius: 8
             )
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -90,7 +90,6 @@ extension PlaceDetailView {
                 .aspectRatio(contentMode: .fill)
                 .customSkeleton(with: viewModel.isPlaceDetailLoading)
                 .frame(width: 218.adjustedWidth, height: 168.adjustedHeight)
-                .background(.gray300)
                 .cornerRadius(10, corners: .allCorners)
             
             VStack(alignment: .center, spacing: 8.adjustedHeight) {
@@ -99,7 +98,6 @@ extension PlaceDetailView {
                     .aspectRatio(contentMode: .fill)
                     .customSkeleton(with: viewModel.isPlaceDetailLoading)
                     .frame(width: 110.adjustedWidth, height: 80.adjustedHeight)
-                    .background(.gray300)
                     .cornerRadius(10, corners: .allCorners)
                 
                 KFImage(URL(string: viewModel.placeDetail.imageUrlStrings[2]))
@@ -107,7 +105,6 @@ extension PlaceDetailView {
                     .aspectRatio(contentMode: .fill)
                     .customSkeleton(with: viewModel.isPlaceDetailLoading)
                     .frame(width: 110.adjustedWidth, height: 80.adjustedHeight)
-                    .background(.gray300)
                     .cornerRadius(10, corners: .allCorners)
             }
         }

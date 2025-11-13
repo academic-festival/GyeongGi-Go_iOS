@@ -9,8 +9,8 @@ import Foundation
 
 final class PlaceDetailService: BaseService<PlaceDetailTargetType> { }
 
-extension PlaceDetailService {
-    func fetchPlaceDetail(placeId: Int) async throws -> BaseResponseBody<PlaceResponseDTO> {
+extension PlaceDetailService: PlaceDetailAPI {
+    func fetchPlaceDetail(placeId: Int) async throws -> BaseResponseBody<PlaceDetailResponseDTO> {
         return try await self.request(with: .fetchPlaceDetail(placeId: placeId))
     }
 }
