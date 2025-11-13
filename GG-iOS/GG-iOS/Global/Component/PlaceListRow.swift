@@ -100,7 +100,7 @@ extension PlaceListRow {
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .customSkeleton(with: isLoading)
-                    .frame(height: 80.adjustedHeight)
+                    .frame(width: 110.adjustedWidth, height: 80.adjustedHeight)
                     .background(.gray300)
                     .cornerRadius(10, corners: .allCorners)
             }

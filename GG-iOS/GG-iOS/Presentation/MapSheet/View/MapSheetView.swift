@@ -30,6 +30,7 @@ struct MapSheetView: View {
                     },
                     sheetContent: {
                         sheetContent
+                            .frame(width: 375.adjustedWidth)
                     }
                 )
             
