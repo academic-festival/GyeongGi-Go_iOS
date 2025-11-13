@@ -8,7 +8,6 @@
 import SwiftUI
 
 import Kingfisher
-import SkeletonUI
 
 struct PlaceListRow: View {
     

@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+import SkeletonUI
+
 struct CustomSkeletonModifier: ViewModifier {
     private let isLoading: Bool
     private let size: CGSize?

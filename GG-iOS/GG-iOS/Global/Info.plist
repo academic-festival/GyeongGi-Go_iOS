@@ -8,7 +8,7 @@
 		<true/>
 	</dict>
 	<key>BASE_URL</key>
-	<string>${BASE_URL}</string>
+	<string>$(BASE_URL)</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Pretendard-Bold.otf</string>
