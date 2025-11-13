@@ -14,7 +14,7 @@ final class MapSheetViewModel: ObservableObject {
     // MARK: - Properties
     
     @Published var isPlaceListLoading: Bool = false
-    @Published var isPlaceDetailLoading: Bool = false
+    @Published var isPlaceDetailLoading: Bool = true
     @Published var shouldShowErrorAlert: Bool = false
     
     @Published var cameraPosition: MapCameraPosition
@@ -85,6 +85,9 @@ final class MapSheetViewModel: ObservableObject {
             bottomSheetHeight = SheetState.defaultHeight
             
         case .selectMarker(let mapPlace):
+            self.isPlaceDetailLoading = true
+            self.placeDetail = PlaceDetail.skeletonData
+            
             fetchPlaceDetailTask?.cancel()
             fetchPlaceDetailTask = Task {
                 // TODO: - 임시 placeId
@@ -100,6 +103,9 @@ final class MapSheetViewModel: ObservableObject {
             }
             
         case .selectPlace(let mapPlace):
+            self.isPlaceDetailLoading = true
+            self.placeDetail = PlaceDetail.skeletonData
+            
             fetchPlaceDetailTask?.cancel()
             fetchPlaceDetailTask = Task {
                 // TODO: - 임시 placeId

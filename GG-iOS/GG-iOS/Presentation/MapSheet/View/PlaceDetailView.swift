@@ -54,7 +54,7 @@ extension PlaceDetailView {
         PlaceCuratorHeader(.detail) {
             onTap?()
         }
-        .padding(.horizontal, 20.adjustedWidth)
+        .padding(.leading, 20.adjustedWidth)
         .padding(.top, 20.adjustedHeight)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
@@ -62,12 +62,13 @@ extension PlaceDetailView {
     private var details: some View {
         VStack(alignment: .center, spacing: 20.adjustedHeight) {
             title
+                .padding(.horizontal, 20.adjustedWidth)
             
             photos
             
             informations
+                .padding(.horizontal, 20.adjustedWidth)
         }
-        .padding(.horizontal, 20.adjustedWidth)
     }
     
     private var title: some View {
@@ -77,7 +78,7 @@ extension PlaceDetailView {
             .lineLimit(1)
             .customSkeleton(
                 with: viewModel.isPlaceDetailLoading,
-                size: CGSize(width: 250.adjustedWidth, height: 33.adjustedHeight),
+                size: CGSize(width: 250.adjustedWidth, height: 35.adjustedHeight),
                 radius: 8
             )
             .frame(maxWidth: .infinity, alignment: .leading)
