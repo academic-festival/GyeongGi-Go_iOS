@@ -30,9 +30,6 @@ struct PlaceListView: View {
             }
             .padding(.bottom, 40.adjustedHeight)
         }
-        .onAppear {
-            viewModel.dispatch(.fetchPlaceList)
-        }
     }
 }
 

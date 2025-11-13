@@ -23,7 +23,7 @@ extension PlaceListTargetType: BaseTargetType {
     
     var method: Moya.Method {
         switch self {
-        case .fetchPlaceList(let request):
+        case .fetchPlaceList:
             return .post
         }
     }
