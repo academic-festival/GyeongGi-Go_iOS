@@ -18,7 +18,7 @@ final class MapSheetViewModel: ObservableObject {
     
     @Published var cameraPosition: MapCameraPosition
     @Published var sheetState: SheetState = .list
-    @Published var mapPlaces: [MapPlace] = MapPlace.mockData
+    @Published var mapPlaces: [MapPlace] = []
     @Published var bottomSheetHeight: CGFloat = SheetState.defaultHeight
     
     private let placeListService: PlaceListAPI
