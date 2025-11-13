@@ -8,9 +8,13 @@
 import Foundation
 
 struct PlaceListResponseDTO: ResponseModelType {
+    let placeList: [PlaceResponseDTO]
+}
+
+struct PlaceResponseDTO: ResponseModelType {
     let placeId: Int
     let placeName: String
-    let adress: String
+    let address: String
     let x: Double
     let y: Double
     let placeImages: [String]

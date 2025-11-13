@@ -10,8 +10,9 @@ import SwiftUI
 
 /// 지도에 표시할 마커 모델입니다.
 struct MapPlace: Identifiable {
-    let id = UUID()
-    let name: String
+    var id: Int { placeId }
+    let placeId: Int
+    let placeName: String
     let address: String
     let imageUrlStrings: [String]
     let coordinate: CLLocationCoordinate2D
@@ -19,10 +20,21 @@ struct MapPlace: Identifiable {
 }
 
 extension MapPlace {
+    init(from dto: PlaceResponseDTO) {
+        self.placeId = dto.placeId
+        self.placeName = dto.placeName
+        self.address = dto.address
+        self.imageUrlStrings = dto.placeImages
+        self.coordinate = CLLocationCoordinate2D(latitude: dto.y, longitude: dto.x)
+    }
+}
+
+extension MapPlace {
     static var mockData: [MapPlace] {
         [
             MapPlace(
-                name: "Seoul Station",
+                placeId: 1,
+                placeName: "Seoul Station",
                 address: "175, Mallijae-ro, Jung-gu, Seoul, Republic of Korea",
                 imageUrlStrings: TempImageUrlString.threeImageUrlStrings(),
                 coordinate: CLLocationCoordinate2D(
@@ -31,7 +43,8 @@ extension MapPlace {
                 )
             ),
             MapPlace(
-                name: "Namdaemun Market",
+                placeId: 2,
+                placeName: "Namdaemun Market",
                 address: "45-2, Namdaemunsijang-gil, Jung-gu, Seoul, Republic of Korea",
                 imageUrlStrings: TempImageUrlString.threeImageUrlStrings(),
                 coordinate: CLLocationCoordinate2D(
@@ -40,7 +53,8 @@ extension MapPlace {
                 )
             ),
             MapPlace(
-                name: "Hoehyeon Station",
+                placeId: 3,
+                placeName: "Hoehyeon Station",
                 address: "54, Toegye-ro, Jung-gu, Seoul, Republic of Korea",
                 imageUrlStrings: TempImageUrlString.threeImageUrlStrings(),
                 coordinate: CLLocationCoordinate2D(

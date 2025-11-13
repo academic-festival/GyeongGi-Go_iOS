@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum NetworkError: Error {
+enum NetworkError: Error, Equatable {
     case apiError(message: String) // 서버의 도메인 에러 메시지
     case unauthorized // 401: 인증 실패
     case notFound // 404: 리소스 없음
@@ -31,6 +31,19 @@ extension NetworkError: CustomStringConvertible {
         case .responseDecodingError: return "응답 데이터를 디코딩하는 데 실패했습니다."
         case .networkFail: return "네트워크 연결에 실패했습니다. 인터넷 상태를 확인해주세요."
         case .unknownError: return "알 수 없는 에러가 발생했습니다."
+        }
+    }
+    
+    var alertMessage: String {
+        switch self {
+        case .networkFail:
+            return "Please check your internet connection and try again."
+            
+        case .internalServerError, .notFound:
+            return "The server is having an issue. Please try again later."
+            
+        default:
+            return "Something went wrong. Please try again."
         }
     }
 }

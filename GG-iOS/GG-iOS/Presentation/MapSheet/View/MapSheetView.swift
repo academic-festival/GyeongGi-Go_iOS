@@ -34,6 +34,15 @@ struct MapSheetView: View {
             
             address
         }
+        .alert(isPresented: $viewModel.shouldShowErrorAlert) {
+            Alert(
+                title: Text(viewModel.alertErrorMessage),
+                message: nil,
+                dismissButton: .default(Text("retry")) {
+                    viewModel.dispatch(.fetchPlaceList)
+                }
+            )
+        }
     }
 }
 
@@ -42,8 +51,8 @@ struct MapSheetView: View {
 extension MapSheetView {
     private var map: some View {
         Map(position: $viewModel.cameraPosition) {
-            ForEach($viewModel.mapPlaces) { $mapPlace in
-                Annotation(mapPlace.name, coordinate: mapPlace.coordinate) {
+            ForEach($viewModel.mapPlaces, id: \.id) { $mapPlace in
+                Annotation(mapPlace.placeName, coordinate: mapPlace.coordinate) {
                     GGMarker(isSelected: mapPlace.isSelected) {
                         viewModel.dispatch(.selectMarker(mapPlace))
                     }

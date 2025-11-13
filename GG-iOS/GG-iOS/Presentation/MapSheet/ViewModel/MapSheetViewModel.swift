@@ -8,9 +8,13 @@
 import MapKit
 import SwiftUI
 
+@MainActor
 final class MapSheetViewModel: ObservableObject {
     
     // MARK: - Properties
+    
+    @Published var isLoading: Bool = false
+    @Published var shouldShowErrorAlert: Bool = false
     
     @Published var cameraPosition: MapCameraPosition
     @Published var sheetState: SheetState = .list
@@ -19,11 +23,11 @@ final class MapSheetViewModel: ObservableObject {
     
     private let placeListService: PlaceListAPI
     
-    // 임시 카메라 위치
-    // TODO: - 바텀시트 내려감에 따라 지도 중심점 조정 필요
     private let initialLocation = CLLocationCoordinate2D(latitude: 37.5598, longitude: 126.9770)
     private let span = MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
     private let spanRate: Double = 0.45
+    
+    var alertErrorMessage: String = ""
     
     // MARK: - Action
     
@@ -33,6 +37,9 @@ final class MapSheetViewModel: ObservableObject {
         case selectMarker(_ mapPlace: MapPlace)
         case selectPlace(_ mapPlace: MapPlace)
         case switchSheetState(_ sheetState: SheetState)
+        
+        // api
+        case fetchPlaceList
     }
     
     // MARK: - Initializer
@@ -81,6 +88,16 @@ final class MapSheetViewModel: ObservableObject {
                 deSelectMarker()
                 self.sheetState = .list
             }
+            
+        case .fetchPlaceList:
+            Task {
+                await fetchPlaceList(
+                    request: PlaceListRequestDTO(
+                        x: initialLocation.longitude,
+                        y: initialLocation.latitude
+                    )
+                )
+            }
         }
     }
 }
@@ -122,6 +139,37 @@ private extension MapSheetViewModel {
 extension MapSheetViewModel {
     func isBottomSheetMinimumHeight() -> Bool {
         return bottomSheetHeight == SheetState.minimumHeight
+    }
+}
+
+// MARK: - API
+
+private extension MapSheetViewModel {
+    func fetchPlaceList(request: PlaceListRequestDTO) async {
+        self.isLoading = true
+        
+        do {
+            let response = try await placeListService.fetchPlaceList(request: request)
+            
+            guard let data = response.data else {
+                self.alertErrorMessage = NetworkError.responseError.alertMessage
+                self.shouldShowErrorAlert =  true
+                return
+            }
+            
+            self.alertErrorMessage = ""
+            self.isLoading = false
+            self.shouldShowErrorAlert =  false
+            self.mapPlaces = data.placeList.map { MapPlace(from: $0) }
+            
+        } catch let error as NetworkError {
+            self.alertErrorMessage = error.alertMessage
+            self.shouldShowErrorAlert =  true
+            
+        } catch {
+            self.alertErrorMessage = NetworkError.unknownError.alertMessage
+            self.shouldShowErrorAlert =  true
+        }
     }
 }
 

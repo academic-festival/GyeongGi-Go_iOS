@@ -30,6 +30,9 @@ struct PlaceListView: View {
             }
             .padding(.bottom, 40.adjustedHeight)
         }
+        .onAppear {
+            viewModel.dispatch(.fetchPlaceList)
+        }
     }
 }
 
@@ -45,9 +48,9 @@ extension PlaceListView {
     
     private var placeList: some View {
         VStack(alignment: .center, spacing: 20.adjustedHeight) {
-            ForEach(viewModel.mapPlaces) { mapPlace in
+            ForEach(viewModel.mapPlaces, id: \.id) { mapPlace in
                 PlaceListRow(
-                    title: mapPlace.name,
+                    title: mapPlace.placeName,
                     address: mapPlace.address,
                     imageUrlStrings: mapPlace.imageUrlStrings,
                     onTap: {
@@ -58,8 +61,4 @@ extension PlaceListView {
         }
         .padding(.horizontal, 20.adjustedWidth)
     }
-}
-
-#Preview {
-    PlaceListView(viewModel: MapSheetViewModel())
 }
