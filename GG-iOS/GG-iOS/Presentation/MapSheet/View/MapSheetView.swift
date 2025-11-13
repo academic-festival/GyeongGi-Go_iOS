@@ -14,7 +14,8 @@ struct MapSheetView: View {
     
     @EnvironmentObject private var appCoordinator: AppCoordinator
     @StateObject private var viewModel = MapSheetViewModel(
-        placeListService: PlaceListService()
+        placeListService: PlaceListService(),
+        placeDetailService: PlaceDetailService()
     )
     
     // MARK: - Body
@@ -33,6 +34,9 @@ struct MapSheetView: View {
                 )
             
             address
+        }
+        .onAppear {
+//            viewModel.dispatch(.fetchPlaceList)
         }
         .alert(isPresented: $viewModel.shouldShowErrorAlert) {
             Alert(
