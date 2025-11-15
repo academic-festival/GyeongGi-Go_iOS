@@ -44,7 +44,7 @@ struct MapSheetView: View {
                 title: Text(viewModel.alertErrorMessage),
                 message: nil,
                 dismissButton: .default(Text("retry")) {
-                    viewModel.dispatch(.fetchPlaceList)
+//                    viewModel.dispatch(.fetchPlaceList)
                 }
             )
         }
