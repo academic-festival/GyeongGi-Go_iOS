@@ -6,6 +6,10 @@
 
 <img src="https://github.com/user-attachments/assets/2b67b88b-cf4e-4226-900a-58932e49fdb1" width="1200">
 
+# 🍏 iOS Developer
+|    김승원   |
+| :-------------: |
+| <img src="https://avatars.githubusercontent.com/SeungWon1125" alt="profile" width="180" height="180"> |
 
 # 🛠️ Tech stack & Architecture
 <img src = "https://github.com/user-attachments/assets/78c82f7b-24c7-40d6-81fd-8e0c892c1a60" width ="700">
