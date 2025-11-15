@@ -23,6 +23,7 @@ final class MapSheetViewModel: ObservableObject {
     // TODO: - HomeAPI 수정되면 다시 빈배열로
     @Published var mapPlaces: [MapPlace] = MapPlace.mockData
     @Published var placeDetail: PlaceDetail = PlaceDetail.skeletonData
+    @Published var currentLocation: CLLocationCoordinate2D? = nil
     
     private let placeListService: PlaceListAPI
     private let placeDetailService: PlaceDetailAPI
@@ -80,42 +81,18 @@ final class MapSheetViewModel: ObservableObject {
             bottomSheetHeight = SheetState.minimumHeight
             
         case .showList:
-            fetchPlaceDetailTask?.cancel()
-            fetchPlaceDetailTask = nil
-            
+            cancelFetchPlaceDetailTask()
             bottomSheetHeight = SheetState.defaultHeight
             
         case .selectMarker(let mapPlace):
-            self.isPlaceDetailLoading = true
-            self.placeDetail = PlaceDetail.skeletonData
-            
-            fetchPlaceDetailTask?.cancel()
-            fetchPlaceDetailTask = Task {
-                // TODO: - 임시 placeId
-                await fetchPlaceDetail(placeId: 153)
-            }
-            
-            selectMarker(mapPlace)
-            setCameraPosition(coordinate: mapPlace.coordinate, spanRate: spanRate)
-            sheetState = .detail
+            fetchPlaceDetail(mapPlace)
             
             withAnimation(.easeInOut(duration: 0.3)) {
                 bottomSheetHeight = SheetState.defaultHeight
             }
             
         case .selectPlace(let mapPlace):
-            self.isPlaceDetailLoading = true
-            self.placeDetail = PlaceDetail.skeletonData
-            
-            fetchPlaceDetailTask?.cancel()
-            fetchPlaceDetailTask = Task {
-                // TODO: - 임시 placeId
-                await fetchPlaceDetail(placeId: 153)
-            }
-            
-            selectMarker(mapPlace)
-            setCameraPosition(coordinate: mapPlace.coordinate, spanRate: spanRate)
-            sheetState = .detail
+            fetchPlaceDetail(mapPlace)
             
         case .switchSheetState(let sheetState):
             switch sheetState {
@@ -123,25 +100,14 @@ final class MapSheetViewModel: ObservableObject {
                 break
                 
             case .detail:
-                fetchPlaceDetailTask?.cancel()
-                fetchPlaceDetailTask = nil
-                
+                cancelFetchPlaceDetailTask()
                 deSelectMarker()
                 placeDetail = PlaceDetail.skeletonData
                 self.sheetState = .list
             }
             
         case .fetchPlaceList:
-            self.isPlaceDetailLoading = true
-            
-            Task {
-                await fetchPlaceList(
-                    request: PlaceListRequestDTO(
-                        x: initialLocation.longitude,
-                        y: initialLocation.latitude
-                    )
-                )
-            }
+            fetchPlaceList()
         }
     }
 }
@@ -165,7 +131,10 @@ private extension MapSheetViewModel {
         }
     }
     
-    /// 카메라 위치를 변경합니다.
+    func setCurrentLocation(_ coordinate: CLLocationCoordinate2D) {
+        currentLocation = coordinate
+    }
+    
     func setCameraPosition(coordinate: CLLocationCoordinate2D, spanRate: Double) {
         withAnimation(.easeInOut(duration: 0.8)) {
             let adjustedCenter = CLLocationCoordinate2D(
@@ -175,6 +144,49 @@ private extension MapSheetViewModel {
             
             cameraPosition = .region(MKCoordinateRegion(center: adjustedCenter, span: span))
         }
+    }
+    
+    func fetchPlaceList() {
+        self.isPlaceDetailLoading = true
+        
+        Task {
+            if let currentLocation {
+                await fetchPlaceList(
+                    request: PlaceListRequestDTO(
+                        x: currentLocation.longitude,
+                        y: currentLocation.latitude
+                    )
+                )
+            } else {
+                await fetchPlaceList(
+                    request: PlaceListRequestDTO(
+                        x: initialLocation.longitude,
+                        y: initialLocation.latitude
+                    )
+                )
+            }
+        }
+    }
+    
+    func fetchPlaceDetail(_ mapPlace: MapPlace) {
+        self.isPlaceDetailLoading = true
+        self.placeDetail = PlaceDetail.skeletonData
+        
+        fetchPlaceDetailTask?.cancel()
+        fetchPlaceDetailTask = Task {
+            // TODO: - 임시 placeId
+            await fetchPlaceDetail(placeId: 153)
+        }
+        setCurrentLocation(mapPlace.coordinate)
+        
+        selectMarker(mapPlace)
+        setCameraPosition(coordinate: mapPlace.coordinate, spanRate: spanRate)
+        sheetState = .detail
+    }
+    
+    func cancelFetchPlaceDetailTask() {
+        fetchPlaceDetailTask?.cancel()
+        fetchPlaceDetailTask = nil
     }
 }
 
