@@ -8,6 +8,7 @@
 import Foundation
 
 struct PlaceDetail {
+    let placeId: Int
     let placeName: String
     let imageUrlStrings: [String]
     let address: String
@@ -18,6 +19,7 @@ struct PlaceDetail {
 
 extension PlaceDetail {
     init(from dto: PlaceDetailResponseDTO) {
+        self.placeId = dto.placeId
         self.placeName = dto.placeName
         self.imageUrlStrings = dto.placeImages
         self.address = dto.address
@@ -30,6 +32,7 @@ extension PlaceDetail {
 extension PlaceDetail {
     static var mockData: PlaceDetail {
         return PlaceDetail(
+            placeId: 1,
             placeName: "Suwon Hwaseong1",
             imageUrlStrings: TempImageUrlString.threeImageUrlStrings(),
             address: "320-2 Hwajeong-dong, Jangan-gu, Suwon-si",
@@ -43,6 +46,7 @@ extension PlaceDetail {
 extension PlaceDetail {
     static var skeletonData: PlaceDetail {
         return PlaceDetail(
+            placeId: 1,
             placeName: "",
             imageUrlStrings: ["1", "2", "3"],
             address: "",

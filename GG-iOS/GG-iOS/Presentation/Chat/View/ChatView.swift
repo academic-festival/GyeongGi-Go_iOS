@@ -12,7 +12,20 @@ struct ChatView: View {
     // MARK: - Properties
     
     @EnvironmentObject private var appCoordinator: AppCoordinator
-    @StateObject private var viewModel = ChatViewModel()
+    @StateObject private var viewModel: ChatViewModel
+    
+    // MARK: - Initializer
+    
+    init(placeId: Int, placeName: String, address: String) {
+        self._viewModel = StateObject(
+            wrappedValue: ChatViewModel(
+                chatBotService: ChatBotService(),
+                placeId: 153,
+                placeName: "Suwon Hwaseong1",
+                address: "175, Mallijae-ro, Jung-gu, Seoul, Republic of Korea1"
+            )
+        )
+    }
     
     // MARK: - Body
     
@@ -27,6 +40,9 @@ struct ChatView: View {
         .customNavigationBar(.chat(backAction: {
             appCoordinator.goBack()
         }))
+        .onAppear {
+            viewModel.dispatch(.submitStartChatBot)
+        }
     }
 }
 
@@ -36,7 +52,7 @@ extension ChatView {
     private var header: some View {
         VStack(alignment: .center, spacing: 0) {
             VStack(alignment: .leading, spacing: 4.adjustedHeight) {
-                Text("Suwon Hwaseong")
+                Text(viewModel.placeName)
                     .applyGGFont(.heading02)
                     .foregroundStyle(.textNatural)
                     .lineLimit(1)
@@ -47,7 +63,7 @@ extension ChatView {
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 12.adjusted, height: 12.adjusted)
                     
-                    Text("320-2 Hwajeong-dong, Jangan-gu, Suwon-si")
+                    Text(viewModel.address)
                         .applyGGFont(.label02)
                         .foregroundStyle(.textLight)
                         .lineLimit(1)
@@ -72,8 +88,13 @@ extension ChatView {
                 ForEach(viewModel.chatMessages, id: \.id) { message in
                     MessageBubble(chatMessage: message)
                 }
+                
+                if viewModel.isChatBotLoading {
+                    LoadingMessageBubble()
+                }
             }
             .padding(.vertical, 28.adjustedHeight)
+            
         }
         .frame(maxWidth: .infinity)
         .background(.gray0)
@@ -95,7 +116,9 @@ extension ChatView {
                     Spacer()
                     
                     Button {
-                        
+                        withAnimation(nil) {
+                            viewModel.dispatch(.updateQuestions)
+                        }
                     } label: {
                         Image(.refreshIcon)
                             .resizable()
@@ -103,15 +126,22 @@ extension ChatView {
                             .frame(width: 24.adjusted, height: 24.adjusted)
                     }
                     .buttonStyle(.plain)
+                    .contentShape(Rectangle())
                 }
                 .padding(.horizontal, 24.adjustedWidth)
                 .frame(height: 24.adjustedHeight)
                 
-                // 임시 질문 list
-                VStack(alignment: .center, spacing: 10.adjustedHeight) {
-                    QuestionRow(question: "Are you curious about Suwon Hwaseong?")
-                    QuestionRow(question: "Are you curious about Suwon Hwaseong?")
-                    QuestionRow(question: "Are you curious about Suwon Hwaseong?")
+                Group {
+                    if viewModel.isQuestionLoading {
+                        LoadingQuestionList()
+                    } else {
+                        LazyVStack(alignment: .center, spacing: 10.adjustedHeight) {
+                            ForEach(viewModel.questions, id: \.self) { question in
+                                QuestionRow(question: question)
+                            }
+                        }
+                        .disabled(viewModel.isChatBotLoading)
+                    }
                 }
                 .padding(.horizontal, 27.adjustedWidth)
             }
@@ -120,6 +150,6 @@ extension ChatView {
 }
 
 #Preview {
-    ChatView()
+    ChatView(placeId: 153, placeName: "Example", address: "Example address-123")
         .environmentObject(AppCoordinator())
 }
