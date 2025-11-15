@@ -11,9 +11,9 @@ struct MessageBubble: View {
     
     // MARK: - Properties
     
-    private let chatMessage: ChatMessage
+    @State private var audioPlayState: AudioPlayState = .paused
     
-    private let audioPlayState: AudioPlayState = .paused
+    private let chatMessage: ChatMessage
     private let horizontalPadding: CGFloat = 20.adjustedWidth
     private let extraHorizontalPadding: CGFloat = 59.adjustedWidth
     
