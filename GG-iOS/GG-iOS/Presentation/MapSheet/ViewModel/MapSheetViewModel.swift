@@ -28,9 +28,12 @@ final class MapSheetViewModel: ObservableObject {
     private let placeDetailService: PlaceDetailAPI
     private var fetchPlaceDetailTask: Task<Void, Never>?
     
-    private let initialLocation = CLLocationCoordinate2D(latitude: 37.28557, longitude: 127.00996)
-    private let span = MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
-    private let spanRate: Double = 0.45
+    private let initialLocation = CLLocationCoordinate2D(latitude: 37.28757, longitude: 127.01550)
+    private var currentLocation = CLLocationCoordinate2D(latitude: 37.28757, longitude: 127.01550)
+    private var defaultSpan = MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+    private let defaultSpanRate: Double = 0.45
+    private let zoomSpan = MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
+    private let zoomSpanRate: Double = 0.225
     
     var alertErrorMessage: String = ""
     
@@ -58,11 +61,11 @@ final class MapSheetViewModel: ObservableObject {
         self.placeDetailService = placeDetailService
         
         let adjustedCenter = CLLocationCoordinate2D(
-            latitude: initialLocation.latitude - (span.latitudeDelta * spanRate),
+            latitude: initialLocation.latitude - (defaultSpan.latitudeDelta * defaultSpanRate),
             longitude: initialLocation.longitude
         )
         
-        cameraPosition = .region(MKCoordinateRegion(center: adjustedCenter, span: span))
+        cameraPosition = .region(MKCoordinateRegion(center: adjustedCenter, span: defaultSpan))
     }
     
     // MARK: - Dispatch
@@ -71,9 +74,16 @@ final class MapSheetViewModel: ObservableObject {
         switch action {
         case .setCameraToUser:
             if bottomSheetHeight == SheetState.minimumHeight {
-                setCameraPosition(coordinate: initialLocation, spanRate: 0.0)
+                setCameraPosition(
+                    coordinate: initialLocation,
+                    zoom: false,
+                    center: true
+                )
             } else {
-                setCameraPosition(coordinate: initialLocation, spanRate: spanRate)
+                setCameraPosition(
+                    coordinate: initialLocation,
+                    zoom: false
+                )
             }
             
         case .showMap:
@@ -99,6 +109,10 @@ final class MapSheetViewModel: ObservableObject {
                 break
                 
             case .detail:
+                setCameraPosition(
+                    coordinate: currentLocation,
+                    zoom: false
+                )
                 cancelFetchPlaceDetailTask()
                 deSelectMarker()
                 placeDetail = PlaceDetail.skeletonData
@@ -130,14 +144,19 @@ private extension MapSheetViewModel {
         }
     }
     
-    func setCameraPosition(coordinate: CLLocationCoordinate2D, spanRate: Double) {
+    func setCameraPosition(coordinate: CLLocationCoordinate2D, zoom: Bool, center: Bool = false) {
         withAnimation(.easeInOut(duration: 0.8)) {
             let adjustedCenter = CLLocationCoordinate2D(
-                latitude: coordinate.latitude - (span.latitudeDelta * spanRate),
+                latitude: coordinate.latitude - (defaultSpan.latitudeDelta * (center ? 0.0 : zoom ? zoomSpanRate : defaultSpanRate)),
                 longitude: coordinate.longitude
             )
             
-            cameraPosition = .region(MKCoordinateRegion(center: adjustedCenter, span: span))
+            cameraPosition = .region(
+                MKCoordinateRegion(
+                    center: adjustedCenter,
+                    span: zoom ? zoomSpan : defaultSpan
+                )
+            )
         }
     }
     
@@ -154,6 +173,8 @@ private extension MapSheetViewModel {
     
     func fetchPlaceDetail(_ mapPlace: MapPlace) {
         self.isPlaceDetailLoading = true
+        self.currentLocation = mapPlace.coordinate
+        self.currentLocation = mapPlace.coordinate
         self.placeDetail = PlaceDetail.skeletonData
         
         fetchPlaceDetailTask?.cancel()
@@ -163,7 +184,10 @@ private extension MapSheetViewModel {
         }
         
         selectMarker(mapPlace)
-        setCameraPosition(coordinate: mapPlace.coordinate, spanRate: spanRate)
+        setCameraPosition(
+            coordinate: mapPlace.coordinate,
+            zoom: true
+        )
         sheetState = .detail
     }
     

@@ -20,7 +20,7 @@ extension ChatBotTargetType: BaseTargetType {
         case .submitStartChatBot:
             return "/chatbot/start"
         case .submitRelayChatBot:
-            return "/chatBot/relay"
+            return "/chatbot/relay"
         }
     }
     
