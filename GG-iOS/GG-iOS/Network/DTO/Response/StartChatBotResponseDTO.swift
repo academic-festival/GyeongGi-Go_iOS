@@ -10,5 +10,5 @@ import Foundation
 struct StartChatBotResponseDTO: ResponseModelType {
     let answer: String
     let suggestedQuestions: [String]
-    let audioData: String
+    let audioData: String?
 }

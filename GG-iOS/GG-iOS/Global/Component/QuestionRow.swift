@@ -30,12 +30,13 @@ struct QuestionRow: View {
             Text(question)
                 .applyGGFont(.body02)
                 .foregroundStyle(.textNatural)
-                .padding(.vertical, 16.adjustedHeight)
                 .padding(.horizontal, 12.adjustedWidth)
+                .frame(height: 50.adjustedHeight)
                 .frame(maxWidth: .infinity)
                 .addBorder(.roundedRectangle(cornerRadius: 10), borderColor: .gray200, borderWidth: 1)
         }
         .buttonStyle(.plain)
+        .contentShape(Rectangle())
     }
 }
 

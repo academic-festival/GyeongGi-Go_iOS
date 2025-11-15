@@ -143,6 +143,7 @@ extension MapSheetView {
                 .animation(.easeInOut(duration: 0.1), value: viewModel.sheetState)
             }
             .buttonStyle(.plain)
+            .contentShape(Rectangle())
             
             HStack(alignment: .center, spacing: 0) {
                 Button {

@@ -22,7 +22,7 @@ struct ChatView: View {
                 chatBotService: ChatBotService(),
                 placeId: 153,
                 placeName: "Suwon Hwaseong1",
-                address: "175, Mallijae-ro, Jung-gu, Seoul, Republic of Korea"
+                address: "175, Mallijae-ro, Jung-gu, Seoul, Republic of Korea1"
             )
         )
     }
@@ -88,8 +88,13 @@ extension ChatView {
                 ForEach(viewModel.chatMessages, id: \.id) { message in
                     MessageBubble(chatMessage: message)
                 }
+                
+                if viewModel.isChatBotLoading {
+                    LoadingMessageBubble()
+                }
             }
             .padding(.vertical, 28.adjustedHeight)
+            
         }
         .frame(maxWidth: .infinity)
         .background(.gray0)
@@ -111,7 +116,9 @@ extension ChatView {
                     Spacer()
                     
                     Button {
-                        
+                        withAnimation(nil) {
+                            viewModel.dispatch(.updateQuestions)
+                        }
                     } label: {
                         Image(.refreshIcon)
                             .resizable()
@@ -119,15 +126,22 @@ extension ChatView {
                             .frame(width: 24.adjusted, height: 24.adjusted)
                     }
                     .buttonStyle(.plain)
+                    .contentShape(Rectangle())
                 }
                 .padding(.horizontal, 24.adjustedWidth)
                 .frame(height: 24.adjustedHeight)
                 
-                // 임시 질문 list
-                VStack(alignment: .center, spacing: 10.adjustedHeight) {
-                    QuestionRow(question: "Are you curious about Suwon Hwaseong?")
-                    QuestionRow(question: "Are you curious about Suwon Hwaseong?")
-                    QuestionRow(question: "Are you curious about Suwon Hwaseong?")
+                Group {
+                    if viewModel.isQuestionLoading {
+                        LoadingQuestionList()
+                    } else {
+                        LazyVStack(alignment: .center, spacing: 10.adjustedHeight) {
+                            ForEach(viewModel.questions, id: \.self) { question in
+                                QuestionRow(question: question)
+                            }
+                        }
+                        .disabled(viewModel.isChatBotLoading)
+                    }
                 }
                 .padding(.horizontal, 27.adjustedWidth)
             }

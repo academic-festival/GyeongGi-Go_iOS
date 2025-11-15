@@ -12,8 +12,10 @@ final class ChatViewModel: ObservableObject {
     
     // MARK: - Properties
     
-    @Published var isLoading: Bool = true
-    @Published var chatMessages: [ChatMessage] = ChatMessage.mockData
+    @Published var isChatBotLoading: Bool = true
+    @Published var isQuestionLoading: Bool = true
+    @Published var chatMessages: [ChatMessage] = []
+    @Published var questions: [String] = []
     
     private let chatBotService: ChatBotAPI
     
@@ -21,9 +23,12 @@ final class ChatViewModel: ObservableObject {
     let placeName: String
     let address: String
     
+    private var suggestedQuestions: [String] = []
+    
     // MARK: - Action
     
     enum Action {
+        case updateQuestions
 
         // api
         case submitStartChatBot
@@ -47,8 +52,12 @@ final class ChatViewModel: ObservableObject {
     
     func dispatch(_ action: Action) {
         switch action {
+        case .updateQuestions:
+            updateRandomQuestions()
+            
         case .submitStartChatBot:
-            isLoading = true
+            isChatBotLoading = true
+            isQuestionLoading = true
             
             Task {
                 await submitStartChatBot(
@@ -61,6 +70,31 @@ final class ChatViewModel: ObservableObject {
     }
 }
 
+// MARK: - Private Functions
+
+private extension ChatViewModel {
+    func appendChatMessage(
+        sender: Sender,
+        message: String,
+        audioString: String?
+    ) {
+        // TODO: - AudioString -> AudioData 변환 필요
+        
+        chatMessages.append(
+            ChatMessage(
+                sender: sender,
+                message: message,
+                audioData: nil // 임시 nil
+            )
+        )
+    }
+    
+    func updateRandomQuestions() {
+        questions = Array(suggestedQuestions.shuffled().prefix(3))
+        isQuestionLoading = false
+    }
+}
+
 // MARK: - API
 
 private extension ChatViewModel {
@@ -70,10 +104,23 @@ private extension ChatViewModel {
             
             guard let data = response.data else { return }
             
+            isChatBotLoading = false
+            suggestedQuestions = data.suggestedQuestions
+            updateRandomQuestions()
+            appendChatMessage(
+                sender: .chatBot,
+                message: data.answer,
+                audioString: data.audioData
+            )
+            
+            print(questions)
+            
         } catch let error as NetworkError {
-            
+            isChatBotLoading = false
+            print(error)
         } catch {
-            
+            isChatBotLoading = false
+            print(NetworkError.unknownError)
         }
     }
 }
