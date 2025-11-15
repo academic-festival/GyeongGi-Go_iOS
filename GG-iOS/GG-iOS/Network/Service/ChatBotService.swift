@@ -15,4 +15,11 @@ extension ChatBotService: ChatBotAPI {
     ) async throws -> BaseResponseBody<StartChatBotResponseDTO> {
         return try await self.request(with: .submitStartChatBot(request: request))
     }
+    
+    func submitRelayChatBot(
+        request: RelayChatBotRequestDTO
+    ) async throws -> BaseResponseBody<RelayChatBotResponseDTO> {
+        return try await self.request(with: .submitRelayChatBot(request: request))
+    }
+    
 }

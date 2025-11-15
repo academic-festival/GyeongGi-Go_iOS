@@ -45,7 +45,7 @@ struct MapSheetView: View {
             address
         }
         .onAppear {
-            viewModel.dispatch(.fetchPlaceList)
+//            viewModel.dispatch(.fetchPlaceList)
         }
         .alert(isPresented: $viewModel.shouldShowErrorAlert) {
             Alert(
