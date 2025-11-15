@@ -12,7 +12,7 @@ struct PlaceDetailResponseDTO: ResponseModelType {
     let placeName: String
     let address: String
     let placeImages: [String]
-    let locationExplain: String
+    let locationExplain: String?
     let price: String?
     let inquiry: String
 }

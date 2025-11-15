@@ -11,6 +11,7 @@ import Moya
 
 enum ChatBotTargetType {
     case submitStartChatBot(request: StartChatBotRequestDTO)
+    case submitRelayChatBot(request: RelayChatBotRequestDTO)
 }
 
 extension ChatBotTargetType: BaseTargetType {
@@ -18,6 +19,8 @@ extension ChatBotTargetType: BaseTargetType {
         switch self {
         case .submitStartChatBot:
             return "/chatbot/start"
+        case .submitRelayChatBot:
+            return "/chatbot/relay"
         }
     }
     
@@ -25,13 +28,23 @@ extension ChatBotTargetType: BaseTargetType {
         switch self {
         case .submitStartChatBot:
             return .post
+        case .submitRelayChatBot:
+            return .post
         }
     }
     
     var task: Moya.Task {
         switch self {
         case .submitStartChatBot(let request):
-            return .requestJSONEncodable(request)
+            return .requestCompositeData(
+                bodyData: (try? JSONEncoder().encode(request)) ?? Data(),
+                urlParameters: ["enableTts": false]
+            )
+        case .submitRelayChatBot(let request):
+            return .requestCompositeData(
+                bodyData: (try? JSONEncoder().encode(request)) ?? Data(),
+                urlParameters: ["enableTts": true]
+            )
         }
     }
 }

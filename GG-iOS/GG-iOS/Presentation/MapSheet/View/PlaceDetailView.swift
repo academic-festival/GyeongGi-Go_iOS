@@ -35,14 +35,17 @@ struct PlaceDetailView: View {
                 details
                     .padding(.bottom, 24.adjustedHeight)
                 
-                divider
-                    .padding(.bottom, 24.adjustedHeight)
-                
-                description
+                if viewModel.placeDetail.description != nil {
+                    divider
+                        .padding(.bottom, 24.adjustedHeight)
+                    
+                    description
+                }
                 
                 scrollSpacer
             }
         }
+        .background(.gray0)
         .disabled(viewModel.isPlaceDetailLoading)
     }
 }
@@ -89,30 +92,10 @@ extension PlaceDetailView {
     }
     
     private var photos: some View {
-        HStack(alignment: .center, spacing: 8.adjustedWidth) {
-            KFImage(URL(string: viewModel.placeDetail.imageUrlStrings[0]))
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .customSkeleton(with: viewModel.isPlaceDetailLoading)
-                .frame(width: 218.adjustedWidth, height: 168.adjustedHeight)
-                .cornerRadius(10, corners: .allCorners)
-            
-            VStack(alignment: .center, spacing: 8.adjustedHeight) {
-                KFImage(URL(string: viewModel.placeDetail.imageUrlStrings[1]))
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .customSkeleton(with: viewModel.isPlaceDetailLoading)
-                    .frame(width: 110.adjustedWidth, height: 80.adjustedHeight)
-                    .cornerRadius(10, corners: .allCorners)
-                
-                KFImage(URL(string: viewModel.placeDetail.imageUrlStrings[2]))
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .customSkeleton(with: viewModel.isPlaceDetailLoading)
-                    .frame(width: 110.adjustedWidth, height: 80.adjustedHeight)
-                    .cornerRadius(10, corners: .allCorners)
-            }
-        }
+        ThreeDividedPhoto(
+            imageUrlStrings: viewModel.placeDetail.imageUrlStrings,
+            isLoading: viewModel.isPlaceDetailLoading
+        )
     }
     
     private var informations: some View {

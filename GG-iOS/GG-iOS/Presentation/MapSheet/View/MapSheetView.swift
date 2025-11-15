@@ -45,7 +45,7 @@ struct MapSheetView: View {
             address
         }
         .onAppear {
-//            viewModel.dispatch(.fetchPlaceList)
+            viewModel.dispatch(.fetchPlaceList)
         }
         .alert(isPresented: $viewModel.shouldShowErrorAlert) {
             Alert(
@@ -164,11 +164,10 @@ extension MapSheetView {
     }
     
     private var sheetContent: some View {
-        Group {
-            switch viewModel.sheetState {
-            case .list:
-                PlaceListView(viewModel: viewModel)
-            case .detail:
+        ZStack(alignment: .center) {
+            PlaceListView(viewModel: viewModel)
+            
+            if viewModel.sheetState == .detail {
                 PlaceDetailView(viewModel: viewModel) { placeId, placeName, address in
                     appCoordinator.navigate(
                         to: .chat(

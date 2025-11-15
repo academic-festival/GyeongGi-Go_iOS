@@ -32,6 +32,7 @@ final class ChatViewModel: ObservableObject {
 
         // api
         case submitStartChatBot
+        case submitRelayChatBot(question: String)
     }
     
     // MARK: - Initializer
@@ -66,6 +67,25 @@ final class ChatViewModel: ObservableObject {
                     )
                 )
             }
+            
+        case .submitRelayChatBot(let question):
+            isChatBotLoading = true
+            
+            appendChatMessage(
+                sender: .user,
+                message: question,
+                audioString: nil
+            )
+            
+            Task {
+                await submitRelayChatBot(
+                    request: RelayChatBotRequestDTO(
+                        placeId: placeId,
+                        question: question
+                    )
+                )
+            }
+            
         }
     }
 }
@@ -80,19 +100,34 @@ private extension ChatViewModel {
     ) {
         // TODO: - AudioString -> AudioData 변환 필요
         
-        chatMessages.append(
-            ChatMessage(
-                sender: sender,
-                message: message,
-                audioData: nil // 임시 nil
+        withAnimation(.easeInOut(duration: 0.2)) {
+            chatMessages.append(
+                ChatMessage(
+                    sender: sender,
+                    message: message,
+                    audioData: nil // 임시 nil
+                )
             )
-        )
+        }
     }
     
     func updateRandomQuestions() {
-        questions = Array(suggestedQuestions.shuffled().prefix(3))
+        let filtered = suggestedQuestions.filter { !questions.contains($0) }
+        
+        let newQuestions: [String]
+        if filtered.count < 3 {
+            newQuestions = Array(suggestedQuestions.shuffled().prefix(3))
+        } else {
+            newQuestions = Array(filtered.shuffled().prefix(3))
+        }
+        
+        withAnimation(.easeInOut(duration: 0.2)) {
+            questions = newQuestions
+        }
+        
         isQuestionLoading = false
     }
+
 }
 
 // MARK: - API
@@ -114,10 +149,29 @@ private extension ChatViewModel {
             )
             
         } catch let error as NetworkError {
-            isChatBotLoading = false
             print(error)
         } catch {
+            print(NetworkError.unknownError)
+        }
+    }
+    
+    func submitRelayChatBot(request: RelayChatBotRequestDTO) async {
+        do {
+            let response = try await chatBotService.submitRelayChatBot(request: request)
+            
+            guard let data = response.data else { return }
+            
             isChatBotLoading = false
+            appendChatMessage(
+                sender: .chatBot,
+                message: data.answer,
+                audioString: data.audioData
+            )
+            updateRandomQuestions()
+            
+        } catch let error as NetworkError {
+            print(error)
+        } catch {
             print(NetworkError.unknownError)
         }
     }

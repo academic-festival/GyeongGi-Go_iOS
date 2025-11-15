@@ -20,9 +20,9 @@ struct ChatView: View {
         self._viewModel = StateObject(
             wrappedValue: ChatViewModel(
                 chatBotService: ChatBotService(),
-                placeId: 153,
-                placeName: "Suwon Hwaseong1",
-                address: "175, Mallijae-ro, Jung-gu, Seoul, Republic of Korea1"
+                placeId: placeId,
+                placeName: placeName,
+                address: address
             )
         )
     }
@@ -83,18 +83,34 @@ extension ChatView {
     }
     
     private var chat: some View {
-        ScrollView(.vertical) {
-            LazyVStack(alignment: .center, spacing: 12.adjustedHeight) {
-                ForEach(viewModel.chatMessages, id: \.id) { message in
-                    MessageBubble(chatMessage: message)
+        ScrollViewReader { proxy in
+            ScrollView(.vertical) {
+                LazyVStack(alignment: .center, spacing: 12.adjustedHeight) {
+                    ForEach(viewModel.chatMessages, id: \.id) { message in
+                        MessageBubble(chatMessage: message)
+                    }
+                    
+                    if viewModel.isChatBotLoading {
+                        LoadingMessageBubble()
+                    }
+                    
+                    Rectangle()
+                        .foregroundStyle(.gray0)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 28.adjustedHeight)
+                        .id("scrollToBottom")
                 }
-                
-                if viewModel.isChatBotLoading {
-                    LoadingMessageBubble()
+                .padding(.top, 28.adjustedHeight)
+            }
+            .onChange(of: viewModel.chatMessages.count) { _, _ in
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                    withAnimation(.easeOut(duration: 0.25)) {
+                        proxy.scrollTo("scrollToBottom", anchor: .bottom)
+                    }
                 }
             }
-            .padding(.vertical, 28.adjustedHeight)
-            
+
+
         }
         .frame(maxWidth: .infinity)
         .background(.gray0)
@@ -127,22 +143,19 @@ extension ChatView {
                     }
                     .buttonStyle(.plain)
                     .contentShape(Rectangle())
+                    .disabled(viewModel.isChatBotLoading)
                 }
                 .padding(.horizontal, 24.adjustedWidth)
                 .frame(height: 24.adjustedHeight)
                 
-                Group {
-                    if viewModel.isQuestionLoading {
-                        LoadingQuestionList()
-                    } else {
-                        LazyVStack(alignment: .center, spacing: 10.adjustedHeight) {
-                            ForEach(viewModel.questions, id: \.self) { question in
-                                QuestionRow(question: question)
-                            }
+                LazyVStack(alignment: .center, spacing: 10.adjustedHeight) {
+                    ForEach(viewModel.questions, id: \.self) { question in
+                        QuestionRow(question: question) {
+                            viewModel.dispatch(.submitRelayChatBot(question: question))
                         }
-                        .disabled(viewModel.isChatBotLoading)
                     }
                 }
+                .disabled(viewModel.isChatBotLoading)
                 .padding(.horizontal, 27.adjustedWidth)
             }
         }

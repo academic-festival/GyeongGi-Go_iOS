@@ -97,11 +97,18 @@ extension PlaceListRow {
         HStack(alignment: .center, spacing: 2.5.adjustedWidth) {
             ForEach(imageUrlStrings, id: \.self) { imageString in
                 KFImage(URL(string: imageString))
+                    .onFailureImage(.tempImageIcon)
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .customSkeleton(with: isLoading)
                     .frame(width: 110.adjustedWidth, height: 80.adjustedHeight)
                     .background(.gray300)
+                    .cornerRadius(10, corners: .allCorners)
+            }
+            
+            ForEach(0..<(3 - imageUrlStrings.count), id: \.self) { _ in
+                Image(.tempImageIcon)
+                    .frame(width: 110.adjustedWidth, height: 80.adjustedHeight)
                     .cornerRadius(10, corners: .allCorners)
             }
         }
