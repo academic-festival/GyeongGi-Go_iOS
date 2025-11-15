@@ -20,9 +20,9 @@ struct ChatView: View {
         self._viewModel = StateObject(
             wrappedValue: ChatViewModel(
                 chatBotService: ChatBotService(),
-                placeId: 153,
-                placeName: "Suwon Hwaseong1",
-                address: "175, Mallijae-ro, Jung-gu, Seoul, Republic of Korea1"
+                placeId: placeId,
+                placeName: placeName,
+                address: address
             )
         )
     }
