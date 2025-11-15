@@ -23,7 +23,7 @@ struct LoadingQuestionList: View {
     
     var body: some View {
         VStack(alignment: .center, spacing: 10.adjustedHeight) {
-            ForEach(0..<3) { _ in
+            ForEach(0..<count, id: \.self) { _ in
                 ProgressView()
                     .scaleEffect(0.8)
                     .frame(maxWidth: .infinity)

@@ -113,8 +113,6 @@ private extension ChatViewModel {
                 audioString: data.audioData
             )
             
-            print(questions)
-            
         } catch let error as NetworkError {
             isChatBotLoading = false
             print(error)
