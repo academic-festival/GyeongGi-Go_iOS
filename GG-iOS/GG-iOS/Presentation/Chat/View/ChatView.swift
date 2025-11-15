@@ -127,22 +127,19 @@ extension ChatView {
                     }
                     .buttonStyle(.plain)
                     .contentShape(Rectangle())
+                    .disabled(viewModel.isChatBotLoading)
                 }
                 .padding(.horizontal, 24.adjustedWidth)
                 .frame(height: 24.adjustedHeight)
                 
-                Group {
-                    if viewModel.isQuestionLoading {
-                        LoadingQuestionList()
-                    } else {
-                        LazyVStack(alignment: .center, spacing: 10.adjustedHeight) {
-                            ForEach(viewModel.questions, id: \.self) { question in
-                                QuestionRow(question: question)
-                            }
+                LazyVStack(alignment: .center, spacing: 10.adjustedHeight) {
+                    ForEach(viewModel.questions, id: \.self) { question in
+                        QuestionRow(question: question) {
+                            viewModel.dispatch(.submitRelayChatBot(question: question))
                         }
-                        .disabled(viewModel.isChatBotLoading)
                     }
                 }
+                .disabled(viewModel.isChatBotLoading)
                 .padding(.horizontal, 27.adjustedWidth)
             }
         }
