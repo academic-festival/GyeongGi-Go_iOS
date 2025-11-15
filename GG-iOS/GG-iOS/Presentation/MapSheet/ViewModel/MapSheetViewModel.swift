@@ -20,8 +20,7 @@ final class MapSheetViewModel: ObservableObject {
     @Published var cameraPosition: MapCameraPosition
     @Published var sheetState: SheetState = .list
     @Published var bottomSheetHeight: CGFloat = SheetState.defaultHeight
-    // TODO: - HomeAPI 수정되면 다시 빈배열로
-    @Published var mapPlaces: [MapPlace] = MapPlace.mockData
+    @Published var mapPlaces: [MapPlace] = []
     @Published var placeDetail: PlaceDetail = PlaceDetail.skeletonData
     
     private let placeListService: PlaceListAPI

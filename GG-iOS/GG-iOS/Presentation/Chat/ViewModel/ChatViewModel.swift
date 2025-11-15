@@ -85,6 +85,7 @@ final class ChatViewModel: ObservableObject {
                     )
                 )
             }
+            
         }
     }
 }
@@ -111,12 +112,22 @@ private extension ChatViewModel {
     }
     
     func updateRandomQuestions() {
+        let filtered = suggestedQuestions.filter { !questions.contains($0) }
+        
+        let newQuestions: [String]
+        if filtered.count < 3 {
+            newQuestions = Array(suggestedQuestions.shuffled().prefix(3))
+        } else {
+            newQuestions = Array(filtered.shuffled().prefix(3))
+        }
+        
         withAnimation(.easeInOut(duration: 0.2)) {
-            questions = Array(suggestedQuestions.shuffled().prefix(3))
+            questions = newQuestions
         }
         
         isQuestionLoading = false
     }
+
 }
 
 // MARK: - API
@@ -156,6 +167,7 @@ private extension ChatViewModel {
                 message: data.answer,
                 audioString: data.audioData
             )
+            updateRandomQuestions()
             
         } catch let error as NetworkError {
             print(error)
