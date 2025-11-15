@@ -4,6 +4,8 @@
 
 > 경기고와 함께, 경기도의 매력을 발견하는 순간까지 바로 GO!
 
+<img src="https://github.com/user-attachments/assets/2b67b88b-cf4e-4226-900a-58932e49fdb1" width="1200">
+
 
 # 🛠️ Tech stack & Architecture
 <img src = "https://github.com/user-attachments/assets/78c82f7b-24c7-40d6-81fd-8e0c892c1a60" width ="700">
