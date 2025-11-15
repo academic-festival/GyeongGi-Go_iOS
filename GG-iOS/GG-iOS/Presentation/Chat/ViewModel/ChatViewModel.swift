@@ -98,14 +98,13 @@ private extension ChatViewModel {
         message: String,
         audioString: String?
     ) {
-        // TODO: - AudioString -> AudioData 변환 필요
         
         withAnimation(.easeInOut(duration: 0.2)) {
             chatMessages.append(
                 ChatMessage(
                     sender: sender,
                     message: message,
-                    audioData: nil // 임시 nil
+                    audioData: AudioConverter.data(fromBase64: audioString)
                 )
             )
         }
