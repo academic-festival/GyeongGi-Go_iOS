@@ -23,7 +23,6 @@ final class MapSheetViewModel: ObservableObject {
     // TODO: - HomeAPI 수정되면 다시 빈배열로
     @Published var mapPlaces: [MapPlace] = MapPlace.mockData
     @Published var placeDetail: PlaceDetail = PlaceDetail.skeletonData
-    @Published var currentLocation: CLLocationCoordinate2D? = nil
     
     private let placeListService: PlaceListAPI
     private let placeDetailService: PlaceDetailAPI
@@ -131,10 +130,6 @@ private extension MapSheetViewModel {
         }
     }
     
-    func setCurrentLocation(_ coordinate: CLLocationCoordinate2D) {
-        currentLocation = coordinate
-    }
-    
     func setCameraPosition(coordinate: CLLocationCoordinate2D, spanRate: Double) {
         withAnimation(.easeInOut(duration: 0.8)) {
             let adjustedCenter = CLLocationCoordinate2D(
@@ -147,24 +142,13 @@ private extension MapSheetViewModel {
     }
     
     func fetchPlaceList() {
-        self.isPlaceDetailLoading = true
-        
         Task {
-            if let currentLocation {
-                await fetchPlaceList(
-                    request: PlaceListRequestDTO(
-                        x: currentLocation.longitude,
-                        y: currentLocation.latitude
-                    )
+            await fetchPlaceList(
+                request: PlaceListRequestDTO(
+                    x: initialLocation.longitude,
+                    y: initialLocation.latitude
                 )
-            } else {
-                await fetchPlaceList(
-                    request: PlaceListRequestDTO(
-                        x: initialLocation.longitude,
-                        y: initialLocation.latitude
-                    )
-                )
-            }
+            )
         }
     }
     
@@ -175,9 +159,8 @@ private extension MapSheetViewModel {
         fetchPlaceDetailTask?.cancel()
         fetchPlaceDetailTask = Task {
             // TODO: - 임시 placeId
-            await fetchPlaceDetail(placeId: 153)
+            await fetchPlaceDetail(placeId: mapPlace.placeId)
         }
-        setCurrentLocation(mapPlace.coordinate)
         
         selectMarker(mapPlace)
         setCameraPosition(coordinate: mapPlace.coordinate, spanRate: spanRate)

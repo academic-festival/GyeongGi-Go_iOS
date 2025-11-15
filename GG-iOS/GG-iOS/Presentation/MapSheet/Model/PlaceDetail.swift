@@ -14,7 +14,7 @@ struct PlaceDetail {
     let address: String
     let inquiry: String
     let price: String?
-    let description: String
+    let description: String?
 }
 
 extension PlaceDetail {

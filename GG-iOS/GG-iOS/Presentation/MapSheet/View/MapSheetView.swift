@@ -164,11 +164,10 @@ extension MapSheetView {
     }
     
     private var sheetContent: some View {
-        Group {
-            switch viewModel.sheetState {
-            case .list:
-                PlaceListView(viewModel: viewModel)
-            case .detail:
+        ZStack(alignment: .center) {
+            PlaceListView(viewModel: viewModel)
+            
+            if viewModel.sheetState == .detail {
                 PlaceDetailView(viewModel: viewModel) { placeId, placeName, address in
                     appCoordinator.navigate(
                         to: .chat(

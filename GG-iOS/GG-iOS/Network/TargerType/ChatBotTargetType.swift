@@ -36,9 +36,15 @@ extension ChatBotTargetType: BaseTargetType {
     var task: Moya.Task {
         switch self {
         case .submitStartChatBot(let request):
-            return .requestJSONEncodable(request)
+            return .requestCompositeData(
+                bodyData: (try? JSONEncoder().encode(request)) ?? Data(),
+                urlParameters: ["enableTts": false]
+            )
         case .submitRelayChatBot(let request):
-            return .requestJSONEncodable(request)
+            return .requestCompositeData(
+                bodyData: (try? JSONEncoder().encode(request)) ?? Data(),
+                urlParameters: ["enableTts": true]
+            )
         }
     }
 }
