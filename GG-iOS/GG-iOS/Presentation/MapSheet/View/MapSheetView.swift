@@ -13,10 +13,18 @@ struct MapSheetView: View {
     // MARK: - Properties
     
     @EnvironmentObject private var appCoordinator: AppCoordinator
-    @StateObject private var viewModel = MapSheetViewModel(
-        placeListService: PlaceListService(),
-        placeDetailService: PlaceDetailService()
-    )
+    @StateObject private var viewModel: MapSheetViewModel
+    
+    // MARK: - Initializer
+    
+    init() {
+        self._viewModel = StateObject(
+            wrappedValue: MapSheetViewModel(
+                placeListService: PlaceListService(),
+                placeDetailService: PlaceDetailService()
+            )
+        )
+    }
     
     // MARK: - Body
     
@@ -160,8 +168,14 @@ extension MapSheetView {
             case .list:
                 PlaceListView(viewModel: viewModel)
             case .detail:
-                PlaceDetailView(viewModel: viewModel) {
-                    appCoordinator.navigate(to: .chat)
+                PlaceDetailView(viewModel: viewModel) { placeId, placeName, address in
+                    appCoordinator.navigate(
+                        to: .chat(
+                            placeId: placeId,
+                            placeName: placeName,
+                            address: address
+                        )
+                    )
                 }
             }
         }

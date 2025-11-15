@@ -13,7 +13,7 @@ final class MapSheetViewModel: ObservableObject {
     
     // MARK: - Properties
     
-    @Published var isPlaceListLoading: Bool = false
+    @Published var isPlaceListLoading: Bool = true
     @Published var isPlaceDetailLoading: Bool = true
     @Published var shouldShowErrorAlert: Bool = false
     
@@ -26,7 +26,6 @@ final class MapSheetViewModel: ObservableObject {
     
     private let placeListService: PlaceListAPI
     private let placeDetailService: PlaceDetailAPI
-    
     private var fetchPlaceDetailTask: Task<Void, Never>?
     
     private let initialLocation = CLLocationCoordinate2D(latitude: 37.5598, longitude: 126.9770)
@@ -38,7 +37,6 @@ final class MapSheetViewModel: ObservableObject {
     // MARK: - Action
     
     enum Action {
-    
         case setCameraToUser
         case showMap
         case showList
@@ -52,7 +50,10 @@ final class MapSheetViewModel: ObservableObject {
     
     // MARK: - Initializer
     
-    init(placeListService: PlaceListAPI, placeDetailService: PlaceDetailAPI) {
+    init(
+        placeListService: PlaceListAPI,
+        placeDetailService: PlaceDetailAPI
+    ) {
         self.placeListService = placeListService
         self.placeDetailService = placeDetailService
         
@@ -131,6 +132,8 @@ final class MapSheetViewModel: ObservableObject {
             }
             
         case .fetchPlaceList:
+            self.isPlaceDetailLoading = true
+            
             Task {
                 await fetchPlaceList(
                     request: PlaceListRequestDTO(
@@ -187,8 +190,6 @@ extension MapSheetViewModel {
 
 private extension MapSheetViewModel {
     func fetchPlaceList(request: PlaceListRequestDTO) async {
-        self.isPlaceListLoading = true
-        
         do {
             let response = try await placeListService.fetchPlaceList(request: request)
             
@@ -215,8 +216,6 @@ private extension MapSheetViewModel {
     }
     
     func fetchPlaceDetail(placeId: Int) async {
-        self.isPlaceDetailLoading = true
-        
         do {
             let response = try await placeDetailService.fetchPlaceDetail(placeId: placeId)
             

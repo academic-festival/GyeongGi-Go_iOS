@@ -12,7 +12,20 @@ struct ChatView: View {
     // MARK: - Properties
     
     @EnvironmentObject private var appCoordinator: AppCoordinator
-    @StateObject private var viewModel = ChatViewModel()
+    @StateObject private var viewModel: ChatViewModel
+    
+    // MARK: - Initializer
+    
+    init(placeId: Int, placeName: String, address: String) {
+        self._viewModel = StateObject(
+            wrappedValue: ChatViewModel(
+                chatBotService: ChatBotService(),
+                placeId: 153,
+                placeName: "Suwon Hwaseong1",
+                address: "175, Mallijae-ro, Jung-gu, Seoul, Republic of Korea"
+            )
+        )
+    }
     
     // MARK: - Body
     
@@ -27,6 +40,9 @@ struct ChatView: View {
         .customNavigationBar(.chat(backAction: {
             appCoordinator.goBack()
         }))
+        .onAppear {
+            viewModel.dispatch(.submitStartChatBot)
+        }
     }
 }
 
@@ -36,7 +52,7 @@ extension ChatView {
     private var header: some View {
         VStack(alignment: .center, spacing: 0) {
             VStack(alignment: .leading, spacing: 4.adjustedHeight) {
-                Text("Suwon Hwaseong")
+                Text(viewModel.placeName)
                     .applyGGFont(.heading02)
                     .foregroundStyle(.textNatural)
                     .lineLimit(1)
@@ -47,7 +63,7 @@ extension ChatView {
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 12.adjusted, height: 12.adjusted)
                     
-                    Text("320-2 Hwajeong-dong, Jangan-gu, Suwon-si")
+                    Text(viewModel.address)
                         .applyGGFont(.label02)
                         .foregroundStyle(.textLight)
                         .lineLimit(1)
@@ -120,6 +136,6 @@ extension ChatView {
 }
 
 #Preview {
-    ChatView()
+    ChatView(placeId: 153, placeName: "Example", address: "Example address-123")
         .environmentObject(AppCoordinator())
 }
