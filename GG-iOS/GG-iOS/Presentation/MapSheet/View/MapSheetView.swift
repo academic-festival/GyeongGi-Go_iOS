@@ -43,9 +43,16 @@ struct MapSheetView: View {
                 )
             
             address
+            
+            SplashView()
+                .opacity(viewModel.shouldDisplaySplash ? 1.0 : 0)
         }
         .onAppear {
             viewModel.dispatch(.fetchPlaceList)
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                viewModel.dispatch(.stopSplash)
+            }
         }
         .alert(isPresented: $viewModel.shouldShowErrorAlert) {
             Alert(

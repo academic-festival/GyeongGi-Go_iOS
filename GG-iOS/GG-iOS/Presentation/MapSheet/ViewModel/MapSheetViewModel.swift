@@ -24,6 +24,8 @@ final class MapSheetViewModel: ObservableObject {
     @Published var placeDetail: PlaceDetail = PlaceDetail.skeletonData
     @Published var cachedPlaceDetail: [Int: PlaceDetail] = [:]
     
+    @Published var shouldDisplaySplash: Bool = true
+    
     private let placeListService: PlaceListAPI
     private let placeDetailService: PlaceDetailAPI
     private var fetchPlaceDetailTask: Task<Void, Never>?
@@ -46,6 +48,7 @@ final class MapSheetViewModel: ObservableObject {
         case selectMarker(_ mapPlace: MapPlace)
         case selectPlace(_ mapPlace: MapPlace)
         case switchSheetState(_ sheetState: SheetState)
+        case stopSplash
         
         // api
         case fetchPlaceList
@@ -117,6 +120,11 @@ final class MapSheetViewModel: ObservableObject {
                 deSelectMarker()
                 placeDetail = PlaceDetail.skeletonData
                 self.sheetState = .list
+            }
+            
+        case .stopSplash:
+            withAnimation(.easeInOut(duration: 0.3)) {
+                shouldDisplaySplash = false
             }
             
         case .fetchPlaceList:
