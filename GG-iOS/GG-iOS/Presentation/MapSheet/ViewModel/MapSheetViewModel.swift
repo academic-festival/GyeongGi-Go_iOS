@@ -17,6 +17,7 @@ final class MapSheetViewModel: ObservableObject {
     @Published var isPlaceDetailLoading: Bool = true
     @Published var shouldShowErrorAlert: Bool = false
     
+    @Published var userAddress: String = "139‑2, Buksu‑dong, Paldal‑gu, Suwon‑si"
     @Published var cameraPosition: MapCameraPosition
     @Published var sheetState: SheetState = .list
     @Published var bottomSheetHeight: CGFloat = SheetState.defaultHeight
