@@ -79,6 +79,10 @@ extension MapSheetView {
                 }
                 .annotationTitles(.hidden)
             }
+            
+            Annotation("", coordinate: viewModel.userLocation()) {
+                UserMarker()
+            }
         }
         .mapControlVisibility(.hidden)
         .mapStyle(.standard(pointsOfInterest: .excludingAll))

@@ -30,10 +30,10 @@ final class MapSheetViewModel: ObservableObject {
     private let placeDetailService: PlaceDetailAPI
     private var fetchPlaceDetailTask: Task<Void, Never>?
     
-    private let initialLocation = CLLocationCoordinate2D(latitude: 37.28757, longitude: 127.01550)
-    private var currentLocation = CLLocationCoordinate2D(latitude: 37.28757, longitude: 127.01550)
+    private let initialLocation = CLLocationCoordinate2D(latitude: 37.28757, longitude: 127.01500)
+    private var currentLocation = CLLocationCoordinate2D(latitude: 37.28757, longitude: 127.01500)
     private var defaultSpan = MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
-    private let defaultSpanRate: Double = 0.45
+    private let defaultSpanRate: Double = 0.405
     private let zoomSpan = MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
     private let zoomSpanRate: Double = 0.225
     
@@ -222,6 +222,10 @@ private extension MapSheetViewModel {
 extension MapSheetViewModel {
     func isBottomSheetMinimumHeight() -> Bool {
         return bottomSheetHeight == SheetState.minimumHeight
+    }
+    
+    func userLocation() -> CLLocationCoordinate2D {
+        return self.initialLocation
     }
 }
 
