@@ -276,7 +276,7 @@ private extension MapSheetViewModel {
             let placeDetail = PlaceDetail(from: data)
             cachedPlaceDetail[placeId] = placeDetail
             placeDetailFetched(placeDetail)
-            print("[\(placeId): \(placeDetail.placeName)] - cahced")
+            print("[\(placeId): \(placeDetail.placeName)] - cached")
             
         } catch is CancellationError {
             print("detail Canceled")
