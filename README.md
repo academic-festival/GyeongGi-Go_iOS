@@ -10,9 +10,22 @@
 |    김승원   |
 | :-------------: |
 | <img src="https://avatars.githubusercontent.com/SeungWon1125" alt="profile" width="180" height="180"> |
+| [SeungWon1125](https://github.com/SeungWon1125) |
+
+
+# 📷 Screenshot
+|    스플래시   |    지도   |    마커   |
+| :-------------: | :----------: | :----------: |
+| <img src = "https://github.com/user-attachments/assets/22723be3-d497-44c1-8a81-0cf162ebeac4" width ="200"> | <img src = "https://github.com/user-attachments/assets/cedf7ac2-faf4-43f2-be5b-1626d07371a7" width ="200">  | <img src = "https://github.com/user-attachments/assets/561a85da-5dcf-4de6-b956-ce9f24c91e37" width ="200">  | 
+
+|    시트   |    상세   |    큐레이션   |
+| :-------------: | :----------: | :----------: |
+| <img src = "https://github.com/user-attachments/assets/8649f2ae-47ed-4724-9916-57e2d48a24ab" width ="200"> | <img src = "https://github.com/user-attachments/assets/81a64654-4fd9-4c82-baef-d8f35dc23dbb" width ="200">  | <img src = "https://github.com/user-attachments/assets/4610c18a-e9b1-47ad-a748-797317bf65ed" width ="200">  | 
+
 
 # 🛠️ Tech stack & Architecture
 <img src = "https://github.com/user-attachments/assets/78c82f7b-24c7-40d6-81fd-8e0c892c1a60" width ="700">
+
 
 <aside>
 
