@@ -82,7 +82,7 @@ extension PlaceDetailView {
         Text(viewModel.placeDetail.placeName)
             .applyGGFont(.title02)
             .foregroundStyle(.textNatural)
-            .lineLimit(1)
+            .lineLimit(2)
             .customSkeleton(
                 with: viewModel.isPlaceDetailLoading,
                 size: CGSize(width: 250.adjustedWidth, height: 35.adjustedHeight),

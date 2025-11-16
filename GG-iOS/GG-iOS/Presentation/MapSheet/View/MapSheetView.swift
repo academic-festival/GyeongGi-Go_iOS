@@ -189,6 +189,7 @@ extension MapSheetView {
                         )
                     )
                 }
+                .animation(nil, value: viewModel.placeDetail)
             }
         }
     }
