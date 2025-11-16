@@ -22,6 +22,7 @@ final class MapSheetViewModel: ObservableObject {
     @Published var bottomSheetHeight: CGFloat = SheetState.defaultHeight
     @Published var mapPlaces: [MapPlace] = []
     @Published var placeDetail: PlaceDetail = PlaceDetail.skeletonData
+    @Published var cachedPlaceDetail: [Int: PlaceDetail] = [:]
     
     private let placeListService: PlaceListAPI
     private let placeDetailService: PlaceDetailAPI
@@ -176,18 +177,30 @@ private extension MapSheetViewModel {
         self.currentLocation = mapPlace.coordinate
         self.placeDetail = PlaceDetail.skeletonData
         
-        fetchPlaceDetailTask?.cancel()
-        fetchPlaceDetailTask = Task {
-            // TODO: - 임시 placeId
-            await fetchPlaceDetail(placeId: mapPlace.placeId)
-        }
-        
+        sheetState = .detail
         selectMarker(mapPlace)
         setCameraPosition(
             coordinate: mapPlace.coordinate,
             zoom: true
         )
-        sheetState = .detail
+        
+        fetchPlaceDetailTask?.cancel()
+        
+        if let cached = cachedPlaceDetail[mapPlace.placeId] {
+            placeDetailFetched(cached)
+            return
+        }
+        
+        fetchPlaceDetailTask = Task {
+            await fetchPlaceDetail(placeId: mapPlace.placeId)
+        }
+    }
+    
+    func placeDetailFetched(_ placeDetail: PlaceDetail) {
+        self.alertErrorMessage = ""
+        self.isPlaceDetailLoading = false
+        self.shouldShowErrorAlert = false
+        self.placeDetail = placeDetail
     }
     
     func cancelFetchPlaceDetailTask() {
@@ -247,14 +260,13 @@ private extension MapSheetViewModel {
             
             try Task.checkCancellation()
             
-            self.alertErrorMessage = ""
-            self.isPlaceDetailLoading = false
-            self.shouldShowErrorAlert = false
-            self.placeDetail = PlaceDetail(from: data)
+            let placeDetail = PlaceDetail(from: data)
+            cachedPlaceDetail[placeId] = placeDetail
+            placeDetailFetched(placeDetail)
+            print("[\(placeId): \(placeDetail.placeName)] - cahced")
             
         } catch is CancellationError {
-            self.isPlaceDetailLoading = true
-            self.placeDetail = PlaceDetail.skeletonData
+            print("detail Canceled")
             
         } catch let error as NetworkError {
             self.alertErrorMessage = error.alertMessage
