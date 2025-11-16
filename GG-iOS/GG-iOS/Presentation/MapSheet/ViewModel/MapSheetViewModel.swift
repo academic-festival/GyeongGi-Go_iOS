@@ -17,20 +17,24 @@ final class MapSheetViewModel: ObservableObject {
     @Published var isPlaceDetailLoading: Bool = true
     @Published var shouldShowErrorAlert: Bool = false
     
+    @Published var userAddress: String = "139‑2, Buksu‑dong, Paldal‑gu, Suwon‑si"
     @Published var cameraPosition: MapCameraPosition
     @Published var sheetState: SheetState = .list
     @Published var bottomSheetHeight: CGFloat = SheetState.defaultHeight
     @Published var mapPlaces: [MapPlace] = []
     @Published var placeDetail: PlaceDetail = PlaceDetail.skeletonData
+    @Published var cachedPlaceDetail: [Int: PlaceDetail] = [:]
+    
+    @Published var shouldDisplaySplash: Bool = true
     
     private let placeListService: PlaceListAPI
     private let placeDetailService: PlaceDetailAPI
     private var fetchPlaceDetailTask: Task<Void, Never>?
     
-    private let initialLocation = CLLocationCoordinate2D(latitude: 37.28757, longitude: 127.01550)
-    private var currentLocation = CLLocationCoordinate2D(latitude: 37.28757, longitude: 127.01550)
+    private let initialLocation = CLLocationCoordinate2D(latitude: 37.28757, longitude: 127.01500)
+    private var currentLocation = CLLocationCoordinate2D(latitude: 37.28757, longitude: 127.01500)
     private var defaultSpan = MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
-    private let defaultSpanRate: Double = 0.45
+    private let defaultSpanRate: Double = 0.405
     private let zoomSpan = MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
     private let zoomSpanRate: Double = 0.225
     
@@ -45,6 +49,7 @@ final class MapSheetViewModel: ObservableObject {
         case selectMarker(_ mapPlace: MapPlace)
         case selectPlace(_ mapPlace: MapPlace)
         case switchSheetState(_ sheetState: SheetState)
+        case stopSplash
         
         // api
         case fetchPlaceList
@@ -118,6 +123,11 @@ final class MapSheetViewModel: ObservableObject {
                 self.sheetState = .list
             }
             
+        case .stopSplash:
+            withAnimation(.easeInOut(duration: 0.3)) {
+                shouldDisplaySplash = false
+            }
+            
         case .fetchPlaceList:
             fetchPlaceList()
         }
@@ -176,18 +186,30 @@ private extension MapSheetViewModel {
         self.currentLocation = mapPlace.coordinate
         self.placeDetail = PlaceDetail.skeletonData
         
-        fetchPlaceDetailTask?.cancel()
-        fetchPlaceDetailTask = Task {
-            // TODO: - 임시 placeId
-            await fetchPlaceDetail(placeId: mapPlace.placeId)
-        }
-        
+        sheetState = .detail
         selectMarker(mapPlace)
         setCameraPosition(
             coordinate: mapPlace.coordinate,
             zoom: true
         )
-        sheetState = .detail
+        
+        fetchPlaceDetailTask?.cancel()
+        
+        if let cached = cachedPlaceDetail[mapPlace.placeId] {
+            placeDetailFetched(cached)
+            return
+        }
+        
+        fetchPlaceDetailTask = Task {
+            await fetchPlaceDetail(placeId: mapPlace.placeId)
+        }
+    }
+    
+    func placeDetailFetched(_ placeDetail: PlaceDetail) {
+        self.alertErrorMessage = ""
+        self.isPlaceDetailLoading = false
+        self.shouldShowErrorAlert = false
+        self.placeDetail = placeDetail
     }
     
     func cancelFetchPlaceDetailTask() {
@@ -201,6 +223,10 @@ private extension MapSheetViewModel {
 extension MapSheetViewModel {
     func isBottomSheetMinimumHeight() -> Bool {
         return bottomSheetHeight == SheetState.minimumHeight
+    }
+    
+    func userLocation() -> CLLocationCoordinate2D {
+        return self.initialLocation
     }
 }
 
@@ -247,14 +273,13 @@ private extension MapSheetViewModel {
             
             try Task.checkCancellation()
             
-            self.alertErrorMessage = ""
-            self.isPlaceDetailLoading = false
-            self.shouldShowErrorAlert = false
-            self.placeDetail = PlaceDetail(from: data)
+            let placeDetail = PlaceDetail(from: data)
+            cachedPlaceDetail[placeId] = placeDetail
+            placeDetailFetched(placeDetail)
+            print("[\(placeId): \(placeDetail.placeName)] - cached")
             
         } catch is CancellationError {
-            self.isPlaceDetailLoading = true
-            self.placeDetail = PlaceDetail.skeletonData
+            print("detail Canceled")
             
         } catch let error as NetworkError {
             self.alertErrorMessage = error.alertMessage

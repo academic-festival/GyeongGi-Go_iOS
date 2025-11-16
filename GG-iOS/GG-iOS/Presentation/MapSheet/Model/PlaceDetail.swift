@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct PlaceDetail {
+struct PlaceDetail: Equatable {
     let placeId: Int
     let placeName: String
     let imageUrlStrings: [String]
@@ -15,6 +15,10 @@ struct PlaceDetail {
     let inquiry: String
     let price: String?
     let description: String?
+    
+    static func == (lhs: PlaceDetail, rhs: PlaceDetail) -> Bool {
+        return lhs.placeId == rhs.placeId
+    }
 }
 
 extension PlaceDetail {

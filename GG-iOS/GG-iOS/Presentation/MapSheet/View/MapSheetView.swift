@@ -43,9 +43,16 @@ struct MapSheetView: View {
                 )
             
             address
+            
+            SplashView()
+                .opacity(viewModel.shouldDisplaySplash ? 1.0 : 0)
         }
         .onAppear {
             viewModel.dispatch(.fetchPlaceList)
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                viewModel.dispatch(.stopSplash)
+            }
         }
         .alert(isPresented: $viewModel.shouldShowErrorAlert) {
             Alert(
@@ -72,6 +79,10 @@ extension MapSheetView {
                 }
                 .annotationTitles(.hidden)
             }
+            
+            Annotation("", coordinate: viewModel.userLocation()) {
+                UserMarker()
+            }
         }
         .mapControlVisibility(.hidden)
         .mapStyle(.standard(pointsOfInterest: .excludingAll))
@@ -85,10 +96,11 @@ extension MapSheetView {
                 .cornerRadius(10, corners: .allCorners)
                 .addBorder(.roundedRectangle(cornerRadius: 10), borderColor: .gray100, borderWidth: 1)
             
-            Text("320 - 2 Hwajeong-dong Jangan-gu Suwon-si")
+            Text(viewModel.userAddress)
                 .applyGGFont(.body02)
                 .foregroundStyle(.textNatural)
                 .lineLimit(1)
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .frame(width: 304.adjustedWidth)
                 .padding(.horizontal, 16.adjustedWidth)
         }
@@ -177,6 +189,7 @@ extension MapSheetView {
                         )
                     )
                 }
+                .animation(nil, value: viewModel.placeDetail)
             }
         }
     }

@@ -108,6 +108,8 @@ extension PlaceListRow {
             
             ForEach(0..<(3 - imageUrlStrings.count), id: \.self) { _ in
                 Image(.tempImageIcon)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
                     .frame(width: 110.adjustedWidth, height: 80.adjustedHeight)
                     .cornerRadius(10, corners: .allCorners)
             }
