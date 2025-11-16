@@ -187,6 +187,20 @@ extension ChatViewModel {
             return .paused
         }
     }
+    
+    func audioDuration(for message: ChatMessage) -> TimeInterval {
+        guard let data = message.audioData else {
+            return 0
+        }
+        
+        do {
+            let tempPlayer = try AVAudioPlayer(data: data)
+            return tempPlayer.duration
+        } catch {
+            print("오디오 duration 계산 실패:", error)
+            return 0
+        }
+    }
 }
 
 // MARK: - API

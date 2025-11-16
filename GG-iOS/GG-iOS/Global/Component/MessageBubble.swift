@@ -11,21 +11,28 @@ struct MessageBubble: View {
     
     // MARK: - Properties
     
+    @State private var progress: CGFloat = 0
+    @State private var animationID = UUID()
+    
     private let chatMessage: ChatMessage
     private let audioPlayState: AudioPlayState
+    private let duration: TimeInterval
+    private let onTap: (() -> Void)?
+    
     private let horizontalPadding: CGFloat = 20.adjustedWidth
     private let extraHorizontalPadding: CGFloat = 59.adjustedWidth
-    private let onTap: (() -> Void)?
     
     // MARK: - Initializer
     
     init(
         chatMessage: ChatMessage,
         audioPlayState: AudioPlayState,
+        duration: TimeInterval,
         onTap: (() -> Void)? = nil
     ) {
         self.chatMessage = chatMessage
         self.audioPlayState = audioPlayState
+        self.duration = duration
         self.onTap = onTap
     }
     
@@ -87,15 +94,6 @@ extension MessageBubble {
     private var audioSlider: some View {
         HStack(alignment: .center, spacing: 12.adjustedWidth) {
             Button {
-//                withAnimation(nil) {
-//                    switch audioPlayState {
-//                    case .paused:
-//                        audioPlayState = .playing
-//                    case .playing:
-//                        audioPlayState = .paused
-//                    }
-//                }
-                
                 onTap?()
             } label: {
                 Image(audioPlayState.icon)
@@ -111,7 +109,7 @@ extension MessageBubble {
                     .foregroundStyle(.gray0)
                 
                 Capsule()
-                    .frame(width: 30.adjustedWidth, height: 4.adjustedHeight)
+                    .frame(width: (100.adjustedWidth * progress), height: 4.adjustedHeight)
                     .foregroundStyle(.mainOrange500)
             }
             .padding(.trailing, 4.adjustedWidth)
@@ -120,29 +118,35 @@ extension MessageBubble {
         .padding(.horizontal, 12.adjustedWidth)
         .background(.gray100)
         .cornerRadius(10, corners: .allCorners)
+        .id(animationID)
+        .onChange(of: audioPlayState) { _, newValue in
+            handleAudioStateChange(newValue)
+        }
     }
 }
 
-#Preview {
-    MessageBubble(
-        chatMessage: ChatMessage(
-            sender: .chatBot,
-            message: "Hello,This is a place where you can feel the charm of Gyeonggi-do.",
-            audioData: nil
-        ), audioPlayState: .paused
-    )
-    MessageBubble(
-        chatMessage: ChatMessage(
-            sender: .user,
-            message: "Why was Hwaseong Fortress built by King Jeongjo?",
-            audioData: nil
-        ), audioPlayState: .paused
-    )
-    MessageBubble(
-        chatMessage: ChatMessage(
-            sender: .chatBot,
-            message: "Suwon Hwaseong Fortress was built in the late 18th century by King Jeongjo to honor his father, Crown Prince Sado, and to strengthen his own royal power. It stands as a masterpiece of Joseon-era military architecture, incorporating the most advanced scientific technologies of its time.",
-            audioData: Data()
-        ), audioPlayState: .paused
-    )
+// MARK: - Functions
+
+extension MessageBubble {
+    private func startProgressAnimation() {
+        progress = 0
+        
+        withAnimation(.linear(duration: duration)) {
+            progress = 1
+        }
+    }
+
+    private func resetProgressAnimation() {
+        progress = 0
+        animationID = UUID()
+    }
+    
+    private func handleAudioStateChange(_ state: AudioPlayState) {
+        switch state {
+        case .playing:
+            startProgressAnimation()
+        case .paused:
+            resetProgressAnimation()
+        }
+    }
 }

@@ -89,7 +89,8 @@ extension ChatView {
                     ForEach(viewModel.chatMessages, id: \.id) { message in
                         MessageBubble(
                             chatMessage: message,
-                            audioPlayState: viewModel.isAudioPlaying(messageId: message.id)
+                            audioPlayState: viewModel.isAudioPlaying(messageId: message.id),
+                            duration: viewModel.audioDuration(for: message)
                         ) {
                             viewModel.dispatch(.toggleAudio(chatMessage: message))
                         }
