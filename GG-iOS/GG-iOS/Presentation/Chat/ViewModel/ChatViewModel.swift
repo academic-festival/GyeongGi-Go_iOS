@@ -108,15 +108,18 @@ private extension ChatViewModel {
         message: String,
         audioString: String?
     ) {
+        let chatMessage = ChatMessage(
+            sender: sender,
+            message: message,
+            audioData: AudioConverter.data(fromBase64: audioString)
+        )
         
         withAnimation(.easeInOut(duration: 0.2)) {
-            chatMessages.append(
-                ChatMessage(
-                    sender: sender,
-                    message: message,
-                    audioData: AudioConverter.data(fromBase64: audioString)
-                )
-            )
+            chatMessages.append(chatMessage)
+        }
+        
+        if sender == .chatBot && audioString != nil {
+            toggleAudio(for: chatMessage)
         }
     }
     
