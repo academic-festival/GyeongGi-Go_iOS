@@ -11,16 +11,22 @@ struct MessageBubble: View {
     
     // MARK: - Properties
     
-    @State private var audioPlayState: AudioPlayState = .paused
-    
     private let chatMessage: ChatMessage
+    private let audioPlayState: AudioPlayState
     private let horizontalPadding: CGFloat = 20.adjustedWidth
     private let extraHorizontalPadding: CGFloat = 59.adjustedWidth
+    private let onTap: (() -> Void)?
     
     // MARK: - Initializer
     
-    init(chatMessage: ChatMessage) {
+    init(
+        chatMessage: ChatMessage,
+        audioPlayState: AudioPlayState,
+        onTap: (() -> Void)? = nil
+    ) {
         self.chatMessage = chatMessage
+        self.audioPlayState = audioPlayState
+        self.onTap = onTap
     }
     
     // MARK: - Body
@@ -81,7 +87,16 @@ extension MessageBubble {
     private var audioSlider: some View {
         HStack(alignment: .center, spacing: 12.adjustedWidth) {
             Button {
+//                withAnimation(nil) {
+//                    switch audioPlayState {
+//                    case .paused:
+//                        audioPlayState = .playing
+//                    case .playing:
+//                        audioPlayState = .paused
+//                    }
+//                }
                 
+                onTap?()
             } label: {
                 Image(audioPlayState.icon)
                     .resizable()
@@ -114,28 +129,20 @@ extension MessageBubble {
             sender: .chatBot,
             message: "Hello,This is a place where you can feel the charm of Gyeonggi-do.",
             audioData: nil
-        )
+        ), audioPlayState: .paused
     )
     MessageBubble(
         chatMessage: ChatMessage(
             sender: .user,
             message: "Why was Hwaseong Fortress built by King Jeongjo?",
             audioData: nil
-        )
+        ), audioPlayState: .paused
     )
     MessageBubble(
         chatMessage: ChatMessage(
             sender: .chatBot,
             message: "Suwon Hwaseong Fortress was built in the late 18th century by King Jeongjo to honor his father, Crown Prince Sado, and to strengthen his own royal power. It stands as a masterpiece of Joseon-era military architecture, incorporating the most advanced scientific technologies of its time.",
             audioData: Data()
-        )
-    )
-    
-    MessageBubble(
-        chatMessage: ChatMessage(
-            sender: .user,
-            message: "Hello,This is a place where you can feel the charm of Gyeonggi-do.",
-            audioData: nil
-        )
+        ), audioPlayState: .paused
     )
 }

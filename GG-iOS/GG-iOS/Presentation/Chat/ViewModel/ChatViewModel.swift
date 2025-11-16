@@ -5,10 +5,11 @@
 //  Created by 김승원 on 11/10/25.
 //
 
+import AVFoundation
 import SwiftUI
 
 @MainActor
-final class ChatViewModel: ObservableObject {
+final class ChatViewModel: NSObject, ObservableObject {
     
     // MARK: - Properties
     
@@ -16,9 +17,11 @@ final class ChatViewModel: ObservableObject {
     @Published var isQuestionLoading: Bool = true
     @Published var chatMessages: [ChatMessage] = []
     @Published var questions: [String] = []
+    @Published var playingMessageId: UUID?
     
     private let chatBotService: ChatBotAPI
     
+    private var audioPlayer: AVAudioPlayer?
     private let placeId: Int
     let placeName: String
     let address: String
@@ -29,6 +32,7 @@ final class ChatViewModel: ObservableObject {
     
     enum Action {
         case updateQuestions
+        case toggleAudio(chatMessage: ChatMessage)
 
         // api
         case submitStartChatBot
@@ -47,6 +51,9 @@ final class ChatViewModel: ObservableObject {
         self.placeId = placeId
         self.placeName = placeName
         self.address = address
+        
+        super.init()
+        self.configureAudioSession()
     }
     
     // MARK: - Dispatch
@@ -55,6 +62,9 @@ final class ChatViewModel: ObservableObject {
         switch action {
         case .updateQuestions:
             updateRandomQuestions()
+            
+        case .toggleAudio(let chatMessage):
+            toggleAudio(for: chatMessage)
             
         case .submitStartChatBot:
             isChatBotLoading = true
@@ -126,7 +136,57 @@ private extension ChatViewModel {
         
         isQuestionLoading = false
     }
+    
+    func toggleAudio(for message: ChatMessage) {
+        if playingMessageId == message.id {
+            stopAudio()
+            return
+        }
 
+        guard let data = message.audioData else { return }
+        
+        do {
+            audioPlayer = try AVAudioPlayer(data: data)
+            audioPlayer?.delegate = self
+            audioPlayer?.play()
+            playingMessageId = message.id
+            
+            print("🎧 오디오 재생 시작 성공 — messageID: \(message.id)")
+        } catch {
+            print("오디오 재생 실패:", error)
+        }
+    }
+    
+    func stopAudio() {
+        audioPlayer?.stop()
+        audioPlayer = nil
+        playingMessageId = nil
+    }
+    
+    private func configureAudioSession() {
+        do {
+            try AVAudioSession.sharedInstance().setCategory(
+                .playback,
+                mode: .spokenAudio,
+                options: [.duckOthers]
+            )
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch {
+            print("오디오 세션 설정 실패:", error)
+        }
+    }
+}
+
+// MARK: - Functions
+
+extension ChatViewModel {
+    func isAudioPlaying(messageId: UUID) -> AudioPlayState {
+        if messageId == playingMessageId {
+            return .playing
+        } else {
+            return .paused
+        }
+    }
 }
 
 // MARK: - API
@@ -173,5 +233,21 @@ private extension ChatViewModel {
         } catch {
             print(NetworkError.unknownError)
         }
+    }
+}
+
+// MARK: -AVAudioPlayerDelegateAVAu
+
+extension ChatViewModel: @MainActor AVAudioPlayerDelegate {
+    func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
+        
+        if flag {
+            print("✅ 오디오 재생 정상 종료 — messageID: \(playingMessageId?.uuidString ?? "nil")")
+        } else {
+            print("⚠️ 오디오 재생 오류로 종료됨")
+        }
+        
+        playingMessageId = nil
+        audioPlayer = nil
     }
 }

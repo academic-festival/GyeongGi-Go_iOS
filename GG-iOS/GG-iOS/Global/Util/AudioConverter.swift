@@ -8,9 +8,18 @@
 import Foundation
 
 enum AudioConverter {
-    /// Base64 문자열을 Data로 변환합니다.
-        static func data(fromBase64 string: String?) -> Data? {
-            guard let string else { return nil }
-            return Data(base64Encoded: string)
+    static func data(fromBase64 string: String?) -> Data? {
+        guard let string = string else {
+            print("⚠️ Base64 string is nil")
+            return nil
         }
+        
+        guard let data = Data(base64Encoded: string) else {
+            print("⚠️ Failed to decode Base64 string (length: \(string.count))")
+            return nil
+        }
+        
+        print("✅ Successfully decoded audio data: \(data.count) bytes")
+        return data
+    }
 }

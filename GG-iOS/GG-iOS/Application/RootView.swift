@@ -13,8 +13,13 @@ struct RootView: View {
     
     var body: some View {
         NavigationStack(path: $appCoordinator.path) {
-            appCoordinator.root.build()
-                .navigationDestination(for: AppDestination.self) { $0.build() }
+//            appCoordinator.root.build()
+            ChatView(
+                placeId: 153,
+                placeName: "Example",
+                address: "320-2 Example-dong, Jangan-gu, Suwon-si"
+            )
+//                .navigationDestination(for: AppDestination.self) { $0.build() }
                 .navigationBarHidden(true)
         }
         .environmentObject(appCoordinator)
